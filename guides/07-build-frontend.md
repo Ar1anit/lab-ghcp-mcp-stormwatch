@@ -1,9 +1,10 @@
-# Task 7: Build a Web Frontend
+# Advanced Task 7: Build a Web Frontend
 
 **Timebox:** 20 minutes
 
 **Clock:** 1:00-1:20
 **Primary project:** `StormWatch.Web/`
+**Level:** Advanced
 
 ## Outcome
 

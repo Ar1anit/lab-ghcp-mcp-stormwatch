@@ -1,8 +1,8 @@
 # StormWatch Participant Guides
 
-These guides divide the lab into a 60-minute core and a 20-minute frontend task.
-Work from the `starter/` directory and keep this index open so you can move on
-when a task's completion gate is satisfied.
+These guides divide the lab into a 60-minute core and an optional 20-minute
+advanced frontend task. Work from the `starter/` directory and keep this index
+open so you can move on when a task's completion gate is satisfied.
 
 ## 60-Minute Core Route
 
@@ -18,15 +18,15 @@ when a task's completion gate is satisfied.
 The timeboxes total exactly 60 minutes. Move forward when the task is sound
 rather than polishing nonessential details.
 
-## Frontend Task
+## Advanced Frontend Task
 
 | Clock | Timebox | Guide | Outcome |
 | --- | ---: | --- | --- |
-| 1:00-1:20 | 20 min | [7. Build a web frontend](07-build-frontend.md) | Add a responsive Razor Pages presentation layer without duplicating application logic or exposing credentials. |
+| 1:00-1:20 | 20 min | [7. Build a web frontend (advanced)](07-build-frontend.md) | Add a responsive Razor Pages presentation layer without duplicating application logic or exposing credentials. |
 
 The complete seven-task route takes 80 minutes. Task 6 remains the completion
-gate for the original CLI and MCP core; Task 7 extends that verified application
-through a separate web host.
+gate for the original CLI and MCP core; advanced Task 7 optionally extends that
+verified application through a separate web host.
 
 ## How to Use Each Guide
 

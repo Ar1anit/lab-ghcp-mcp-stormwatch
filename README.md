@@ -5,7 +5,8 @@ calculates a transparent storm-risk signal, exposes it to GitHub Copilot through
 a local server built with the official Model Context Protocol C# SDK, and adds a
 server-rendered web frontend.
 
-- **Duration:** 80 minutes total: 60-minute core plus 20-minute frontend task
+- **Duration:** 80 minutes total: 60-minute core plus an optional 20-minute
+  advanced frontend task
 - **Audience:** Developers with basic C# and Git familiarity
 - **Format:** Individual or pairs, guided checkpoints
 - **Result:** A tested CLI, two structured MCP tools, and a Razor Pages frontend
@@ -30,9 +31,9 @@ You will:
 ## Participant Guides
 
 Use the seven step-by-step guides during the timed lab. Tasks 1-6 form the
-60-minute CLI and MCP core; Task 7 adds the 20-minute frontend. Each guide ends
-with a completion gate that checks behavior, design, evidence, security, and
-understanding—not just whether a file was edited.
+60-minute CLI and MCP core; advanced Task 7 adds the optional 20-minute
+frontend. Each guide ends with a completion gate that checks behavior, design,
+evidence, security, and understanding—not just whether a file was edited.
 
 1. [Orient and verify](guides/01-orient-and-verify.md) — 7 minutes
 2. [Build the weather adapter](guides/02-build-weather-adapter.md) — 13 minutes
@@ -40,7 +41,7 @@ understanding—not just whether a file was edited.
 4. [Complete the CLI](guides/04-complete-cli.md) — 9 minutes
 5. [Expose MCP tools](guides/05-expose-mcp-tools.md) — 10 minutes
 6. [Validate and review](guides/06-validate-and-review.md) — 6 minutes
-7. [Build a web frontend](guides/07-build-frontend.md) — 20 minutes
+7. [Build a web frontend (advanced)](guides/07-build-frontend.md) — 20 minutes
 
 See [the participant guide index](guides/README.md) for the complete route,
 working conventions, and recovery rules.
@@ -96,11 +97,11 @@ Code requests it through a masked MCP input.
 | 0:44-0:54 | [Implement MCP tools](guides/05-expose-mcp-tools.md) | Official SDK exposes two structured tools. |
 | 0:54-1:00 | [Validate and review](guides/06-validate-and-review.md) | Tests pass and one tool call is inspected. |
 
-## The 20-Minute Frontend Task
+## The 20-Minute Advanced Frontend Task
 
 | Time | Checkpoint | Outcome |
 | --- | --- | --- |
-| 1:00-1:20 | [Build a web frontend](guides/07-build-frontend.md) | A responsive Razor Pages UI reuses the verified core and keeps credentials server-side. |
+| 1:00-1:20 | [Build a web frontend (advanced)](guides/07-build-frontend.md) | A responsive Razor Pages UI reuses the verified core and keeps credentials server-side. |
 
 ## 0:00-0:07 - Orient And Verify
 
@@ -229,7 +230,7 @@ security, MCP contract, or test coverage gaps. Cite files. If there are no
 findings, say so and name the largest remaining limitation.
 ```
 
-## 1:00-1:20 - Build A Web Frontend
+## 1:00-1:20 - Advanced Task 7: Build A Web Frontend
 
 Scaffold a Razor Pages project that references the existing application:
 
@@ -253,9 +254,9 @@ Run the frontend against `tests/fixtures/forecast.json`. The page should show
 the same deterministic Bengaluru result as the CLI while browser requests
 remain on localhost.
 
-Follow the full [Task 7 guide](guides/07-build-frontend.md) for architecture,
-security, accessibility, responsive-layout, negative-path, and completion
-checks.
+Follow the full [advanced Task 7 guide](guides/07-build-frontend.md) for
+architecture, security, accessibility, responsive-layout, negative-path, and
+completion checks.
 
 ## Stretch Goals
 

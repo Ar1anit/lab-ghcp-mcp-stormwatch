@@ -1,9 +1,9 @@
 # StormWatch Facilitator Guide
 
-Use this guide to deliver the 60-minute C# and MCP core followed by the
-20-minute frontend task. The complete seven-task route takes 80 minutes and
-teaches disciplined agent-assisted development, MCP integration, and reuse
-across presentation layers—not weather science.
+Use this guide to deliver the 60-minute C# and MCP core followed by the optional
+20-minute advanced frontend task. The complete seven-task route takes 80
+minutes and teaches disciplined agent-assisted development, MCP integration,
+and reuse across presentation layers—not weather science.
 
 ## Room Setup
 
@@ -38,7 +38,7 @@ Do not introduce patient, product, operational, or restricted data.
 - One MCP call completes in Copilot Agent mode.
 - Output is labeled as an educational heuristic.
 
-## Frontend Definition Of Done
+## Advanced Frontend Definition Of Done
 
 - The Razor Pages project builds and the original 17 tests remain unchanged.
 - Fixture mode renders five periods and the expected Bengaluru assessment.
@@ -56,11 +56,11 @@ Do not introduce patient, product, operational, or restricted data.
 | 0:35-0:44 | Complete CLI and inspect claims. | All 17 tests and fixture CLI pass. |
 | 0:44-0:54 | Explain SDK registration, attributes, and stdio. | Two tools appear in Copilot. |
 | 0:54-1:00 | Approve one invocation and review. | Names a limitation and guardrail. |
-| 1:00-1:20 | Scaffold Razor Pages and coach service reuse, browser trust boundaries, and responsive review. | Deterministic frontend result passes its completion gate. |
+| 1:00-1:20 | Run advanced Task 7: scaffold Razor Pages and coach service reuse, browser trust boundaries, and responsive review. | Deterministic frontend result passes its completion gate. |
 
 Protect the final 16 minutes. Invoking a self-built official-SDK tool is the
-core GHCP x MCP outcome. Reserve the additional 20 minutes when Task 7 is part
-of the delivery.
+core GHCP x MCP outcome. Reserve the additional 20 minutes when advanced Task 7
+is part of the delivery.
 
 ## Teaching Notes
 
