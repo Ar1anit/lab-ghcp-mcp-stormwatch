@@ -1,0 +1,26 @@
+{
+  "servers": {
+    "stormwatch": {
+      "type": "stdio",
+      "command": "dotnet",
+      "args": [
+        "run",
+        "--project",
+        "${workspaceFolder}/StormWatch/StormWatch.csproj",
+        "--",
+        "--mcp"
+      ],
+      "env": {
+        "OPENWEATHER_API_KEY": "${input:openweather-api-key}"
+      }
+    }
+  },
+  "inputs": [
+    {
+      "type": "promptString",
+      "id": "openweather-api-key",
+      "description": "OpenWeather API key",
+      "password": true
+    }
+  ]
+}
