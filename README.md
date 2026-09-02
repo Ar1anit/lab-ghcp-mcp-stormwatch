@@ -23,6 +23,22 @@ You will:
 - keep credentials out of source, chat, logs, and tool results; and
 - expose existing application services with the official MCP C# SDK over stdio.
 
+## Participant Guides
+
+Use the six step-by-step guides during the timed lab. Each guide ends with a
+completion gate that checks behavior, design, evidence, security, and
+understanding—not just whether a file was edited.
+
+1. [Orient and verify](guides/01-orient-and-verify.md) — 7 minutes
+2. [Build the weather adapter](guides/02-build-weather-adapter.md) — 13 minutes
+3. [Implement storm-risk rules](guides/03-implement-risk-rules.md) — 15 minutes
+4. [Complete the CLI](guides/04-complete-cli.md) — 9 minutes
+5. [Expose MCP tools](guides/05-expose-mcp-tools.md) — 10 minutes
+6. [Validate and review](guides/06-validate-and-review.md) — 6 minutes
+
+See [the participant guide index](guides/README.md) for the complete route,
+working conventions, and recovery rules.
+
 ## Architecture
 
 ```text
@@ -65,12 +81,12 @@ Code requests it through a masked MCP input.
 
 | Time | Checkpoint | Outcome |
 | --- | --- | --- |
-| 0:00-0:07 | Orient and verify | Understand the red baseline and boundaries. |
-| 0:07-0:20 | Build the weather adapter | OpenWeather JSON becomes typed records. |
-| 0:20-0:35 | Implement risk rules | Scoring is deterministic and explainable. |
-| 0:35-0:44 | Complete the CLI | City or fixture produces a safe report. |
-| 0:44-0:54 | Implement MCP tools | Official SDK exposes two structured tools. |
-| 0:54-1:00 | Validate and review | Tests pass and one tool call is inspected. |
+| 0:00-0:07 | [Orient and verify](guides/01-orient-and-verify.md) | Understand the red baseline and boundaries. |
+| 0:07-0:20 | [Build the weather adapter](guides/02-build-weather-adapter.md) | OpenWeather JSON becomes typed records. |
+| 0:20-0:35 | [Implement risk rules](guides/03-implement-risk-rules.md) | Scoring is deterministic and explainable. |
+| 0:35-0:44 | [Complete the CLI](guides/04-complete-cli.md) | City or fixture produces a safe report. |
+| 0:44-0:54 | [Implement MCP tools](guides/05-expose-mcp-tools.md) | Official SDK exposes two structured tools. |
+| 0:54-1:00 | [Validate and review](guides/06-validate-and-review.md) | Tests pass and one tool call is inspected. |
 
 ## 0:00-0:07 - Orient And Verify
 
