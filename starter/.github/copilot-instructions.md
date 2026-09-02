@@ -16,3 +16,6 @@
 - A stdio MCP server must not write application output to stdout because stdout
   carries protocol messages. Keep logging providers cleared in MCP mode.
 - Keep tool responses concise, structured, deterministic, and free of secrets.
+- Treat any frontend as a presentation adapter over the existing services. Keep
+  OpenWeather credentials and requests server-side, and do not duplicate risk
+  rules or parsing in browser code.

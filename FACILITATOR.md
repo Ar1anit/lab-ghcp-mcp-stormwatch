@@ -1,14 +1,16 @@
 # StormWatch Facilitator Guide
 
-Use this guide to deliver the C# participant lab in exactly 60 minutes. The lab
-teaches disciplined agent-assisted development and MCP integration, not weather
-science.
+Use this guide to deliver the 60-minute C# and MCP core followed by the
+20-minute frontend task. The complete seven-task route takes 80 minutes and
+teaches disciplined agent-assisted development, MCP integration, and reuse
+across presentation layers—not weather science.
 
 ## Room Setup
 
 Complete this at least one day before delivery:
 
 - Verify the .NET 10 SDK and C# Dev Kit on the standard developer image.
+- Confirm the ASP.NET Core Web App (`webapp`) template is available.
 - Verify GitHub Copilot Agent mode and local MCP servers are allowed by policy.
 - Have participants activate OpenWeather keys in advance.
 - Test Direct Geocoding and 5 Day / 3 Hour Forecast on the venue network.
@@ -27,7 +29,7 @@ dotnet run --project .\solution\StormWatch.Smoke -- `
 
 Do not introduce patient, product, operational, or restricted data.
 
-## Definition Of Done
+## Core Definition Of Done
 
 - All 17 tests pass.
 - The fixture CLI reports `WARNING (100/100)` at `2026-08-30 06:00 UTC`.
@@ -35,6 +37,14 @@ Do not introduce patient, product, operational, or restricted data.
 - The official C# SDK server advertises both tools over stdio.
 - One MCP call completes in Copilot Agent mode.
 - Output is labeled as an educational heuristic.
+
+## Frontend Definition Of Done
+
+- The Razor Pages project builds and the original 17 tests remain unchanged.
+- Fixture mode renders five periods and the expected Bengaluru assessment.
+- The web page reuses `StormWatchDataService` and `StormRiskService`.
+- Blank input, accessibility, and narrow-width checks pass.
+- Browser traffic stays on localhost and contains no credential or stack trace.
 
 ## Delivery Clock
 
@@ -46,9 +56,11 @@ Do not introduce patient, product, operational, or restricted data.
 | 0:35-0:44 | Complete CLI and inspect claims. | All 17 tests and fixture CLI pass. |
 | 0:44-0:54 | Explain SDK registration, attributes, and stdio. | Two tools appear in Copilot. |
 | 0:54-1:00 | Approve one invocation and review. | Names a limitation and guardrail. |
+| 1:00-1:20 | Scaffold Razor Pages and coach service reuse, browser trust boundaries, and responsive review. | Deterministic frontend result passes its completion gate. |
 
 Protect the final 16 minutes. Invoking a self-built official-SDK tool is the
-core GHCP x MCP outcome.
+core GHCP x MCP outcome. Reserve the additional 20 minutes when Task 7 is part
+of the delivery.
 
 ## Teaching Notes
 
@@ -83,6 +95,18 @@ Stdio reserves stdout for protocol messages. The starter clears logging
 providers before running MCP mode. Local servers execute with the user's
 permissions, so pause on the proposed tool name and city before approval.
 
+### Frontend
+
+Keep the browser thin and server-rendered. The Razor Page should inject
+`StormWatchDataService`, pass `HttpContext.RequestAborted`, call
+`StormRiskService.Assess`, and render typed values. It must not parse the CLI
+string or call OpenWeather from JavaScript.
+
+Run the web host separately from the MCP process. ASP.NET logging is normal in
+the web process but must never be introduced into the MCP stdio stream. Use the
+fixture for the acceptance path and inspect browser developer tools to prove
+that no key or direct OpenWeather request crosses the browser boundary.
+
 ## Progressive Hints
 
 ### Weather
@@ -110,6 +134,14 @@ permissions, so pause on the proposed tool name and city before approval.
 2. Map domain values into the supplied structured result records.
 3. Call `StormRiskService.Assess`; do not repeat thresholds.
 
+### Frontend
+
+1. Reference `stormwatch/StormWatch.csproj` from the Razor Pages project.
+2. Register and inject `StormWatchDataService`.
+3. Keep forecast and assessment as typed page-model properties.
+4. Use the fixture and localhost before troubleshooting live weather.
+5. Check mobile reflow and browser network traffic before polishing visuals.
+
 ## Recovery
 
 Give one hint at a time. If less than 16 minutes remain, restore the C# source:
@@ -127,3 +159,5 @@ If live API access fails, use fixture MCP mode from `TROUBLESHOOTING.md`.
 - What belongs in the application core rather than an MCP wrapper?
 - What does the SDK automate, and what security decisions remain yours?
 - What did the tests prove, and what did they not prove?
+- Which responsibilities must remain server-side when the application gains a
+  browser frontend?

@@ -1,10 +1,10 @@
 # StormWatch Participant Guides
 
-These guides divide the complete lab into six timed tasks. Work from the
-`starter/` directory and keep this index open so you can move on when a task's
-completion gate is satisfied.
+These guides divide the lab into a 60-minute core and a 20-minute frontend task.
+Work from the `starter/` directory and keep this index open so you can move on
+when a task's completion gate is satisfied.
 
-## 60-Minute Route
+## 60-Minute Core Route
 
 | Clock | Timebox | Guide | Outcome |
 | --- | ---: | --- | --- |
@@ -17,6 +17,16 @@ completion gate is satisfied.
 
 The timeboxes total exactly 60 minutes. Move forward when the task is sound
 rather than polishing nonessential details.
+
+## Frontend Task
+
+| Clock | Timebox | Guide | Outcome |
+| --- | ---: | --- | --- |
+| 1:00-1:20 | 20 min | [7. Build a web frontend](07-build-frontend.md) | Add a responsive Razor Pages presentation layer without duplicating application logic or exposing credentials. |
+
+The complete seven-task route takes 80 minutes. Task 6 remains the completion
+gate for the original CLI and MCP core; Task 7 extends that verified application
+through a separate web host.
 
 ## How to Use Each Guide
 
@@ -39,6 +49,7 @@ constraints hold, and you can explain the evidence.
 - Never paste or commit an OpenWeather API key.
 - Use the synthetic fixture and mocked HTTP tests for deterministic evidence.
 - Keep weather transport, scoring, CLI rendering, and MCP transport separate.
+- Treat the frontend as a presentation adapter over the existing services.
 - Run focused tests while iterating, then the full suite before finishing.
 - Review Copilot edits and tool calls before accepting or approving them.
 - Treat StormWatch output as an educational heuristic, never an official
@@ -61,7 +72,7 @@ dotnet test .\StormWatch.Tests\StormWatch.Tests.csproj
 If live OpenWeather access is unavailable, use the fixture configuration in
 [`TROUBLESHOOTING.md`](../TROUBLESHOOTING.md#offline-mcp-fallback).
 
-## Final Lab Outcome
+## Core Lab Outcome
 
 At the end of 60 minutes, you should have evidence that:
 
@@ -71,3 +82,12 @@ At the end of 60 minutes, you should have evidence that:
 - the SDK advertises `get_forecast` and `assess_storm_risk`;
 - one MCP invocation returns structured data in Copilot Agent mode; and
 - you can explain at least one limitation that tests do not remove.
+
+## Frontend Outcome
+
+After Task 7, you should also have evidence that:
+
+- a responsive Razor Pages frontend renders the deterministic fixture result;
+- browser code never calls OpenWeather or receives the API key;
+- the web page reuses the existing data and risk services; and
+- accessibility, negative-input, mobile-width, and secret-boundary checks pass.

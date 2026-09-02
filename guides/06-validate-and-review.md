@@ -132,4 +132,6 @@ following are true:
 **Final evidence set:** the 17-test summary, fixture CLI output, discovered tool
 schemas, one inspected MCP result, the reviewed diff, and one stated limitation.
 
-Return to the [participant guide index](README.md) for the complete route.
+Continue to [Task 7: Build a web frontend](07-build-frontend.md), or return to
+the [participant guide index](README.md) if you are completing only the
+60-minute core.
