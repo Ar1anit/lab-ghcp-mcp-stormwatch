@@ -1,16 +1,17 @@
 # StormWatch: GitHub Copilot x MCP C# Developer Lab
 
 Build a .NET 10 application that reads OpenWeather's five-day forecast,
-calculates a transparent storm-risk signal, exposes it through a local server
-using the official Model Context Protocol C# SDK, and optionally presents the
-same result in a web frontend.
+calculates a transparent storm-risk signal, and exposes it through a local
+server using the official Model Context Protocol C# SDK. Test that server with
+both GitHub Copilot and a local client powered by a model deployment in
+Microsoft Foundry, then optionally present the same result in a web frontend.
 
 - **Core duration:** 60 minutes
 - **Advanced task:** 20 minutes
 - **Audience:** Developers with basic C# and Git familiarity
 - **Starting point:** Open `starter/` as the VS Code workspace root
-- **Result:** A tested CLI, two structured MCP tools, and an optional Razor Pages
-  frontend
+- **Result:** A tested CLI, two structured MCP tools, a Foundry-model validation,
+  and an optional Razor Pages frontend
 
 > StormWatch is an educational risk indicator, not a meteorological forecast,
 > emergency alert, medical device, or safety system. Use official local weather
@@ -27,13 +28,54 @@ same result in a web frontend.
 - Keep weather access, risk calculation, CLI presentation, and MCP transport as
   separate responsibilities.
 - Use the official `ModelContextProtocol` C# SDK for MCP behavior.
+- Use Microsoft Entra ID for Foundry model access; do not distribute model API
+  keys.
 - Keep all user-facing risk output labeled as an educational heuristic.
+
+## Runtime Architecture
+
+GitHub Copilot remains the coding assistant. Your Microsoft Foundry deployment
+provides the model used by the separate local validation client; it does not
+replace the model selected in GitHub Copilot Chat.
+
+```text
+GitHub Copilot -----------------------> local StormWatch MCP server
+                                              ^
+                                              | stdio on participant machine
+                                              |
+Microsoft Foundry model <--- local C# Foundry client
+          ^                         |
+          | outbound HTTPS          +-- executes discovered MCP tools locally
+          |
+participant Entra identity
+```
+
+The laptop requires no inbound connection or public tunnel. The local client
+makes an outbound model request, the model requests a tool call, and the client
+executes that call against the local stdio server. Tool inputs and outputs used
+in the conversation are sent to the Foundry model, so use only synthetic lab
+data.
+
+## Foundry Setup
+
+The facilitator provides one model deployment in Microsoft Foundry before the
+workshop. Each participant needs:
+
+- permission to invoke that deployment with their own Microsoft Entra identity;
+- Azure CLI authentication to the correct tenant;
+- the Azure OpenAI endpoint shown for the deployment; and
+- the deployment name, which can differ from the model family name.
+
+No shared model key is required. See [FOUNDRY.md](FOUNDRY.md) for the participant
+readiness check and the exact local-client command.
 
 ## Starting Check
 
-From `starter/`, confirm that the .NET 10 SDK is available and the test project
-restores. The untouched starter must compile, discover 17 tests, and fail only
-at the four intentional implementation checkpoints.
+From `starter/`, confirm that the .NET 10 SDK is available, both projects
+restore, and Foundry authentication succeeds. The untouched StormWatch starter
+must compile, discover 17 tests, and fail only at the four intentional
+implementation checkpoints. `StormWatch.FoundryClient` must build before the
+timed exercise begins.
 
 ## Core Challenge
 
@@ -44,7 +86,7 @@ at the four intentional implementation checkpoints.
 | 0:20-0:35 | 3. Implement storm-risk rules | Produce deterministic, explainable risk assessments. |
 | 0:35-0:44 | 4. Complete the CLI | Produce a safe report from either live city data or the offline fixture. |
 | 0:44-0:54 | 5. Expose MCP tools | Make forecast and assessment capabilities available through the official SDK. |
-| 0:54-1:00 | 6. Validate and review | Demonstrate correct behavior, secure handling, and one successful MCP invocation. |
+| 0:54-1:00 | 6. Validate and review | Demonstrate correct behavior with both Copilot and the facilitator-provided Foundry model. |
 
 ## Step 1: Understand The System
 
@@ -175,6 +217,8 @@ C# MCP SDK.
 - VS Code discovers both tools from the local MCP server.
 - Each tool can be invoked successfully using fixture mode or an approved live
   OpenWeather connection.
+- `StormWatch.FoundryClient` discovers the same two local tools and makes them
+  available to the facilitator-provided Foundry model.
 
 ## Step 6: Validate And Review
 
@@ -188,6 +232,8 @@ MCP.
 - All 17 tests pass without modification.
 - The fixture CLI result matches the required score and peak time.
 - One `assess_storm_risk` invocation returns structured forecast evidence.
+- The local Foundry client produces an answer grounded in a local StormWatch
+  tool call rather than unsupported model knowledge.
 - No credential appears in source, configuration output, exceptions, logs, or
   tool results.
 - A review identifies any remaining correctness, security, MCP contract, or
@@ -196,7 +242,8 @@ MCP.
 
 ### Completion evidence
 
-Show the passing test summary and one inspected MCP result to the facilitator.
+Show the passing test summary, one inspected GitHub Copilot MCP result, and one
+Foundry-backed local-client result to the facilitator.
 
 ## Advanced Step 7: Build A Web Frontend
 
@@ -243,6 +290,8 @@ of the challenge.
 
 - [Develop with the MCP C# SDK](https://learn.microsoft.com/dotnet/ai/get-started-mcp)
 - [MCP C# SDK](https://github.com/modelcontextprotocol/csharp-sdk)
+- [Microsoft Agent Framework](https://learn.microsoft.com/agent-framework/overview/)
+- [Use local MCP tools with agents](https://learn.microsoft.com/agent-framework/agents/tools/local-mcp-tools)
 - [Add and manage MCP servers in VS Code](https://code.visualstudio.com/docs/copilot/customization/mcp-servers)
 - [Razor Pages architecture and concepts](https://learn.microsoft.com/aspnet/core/razor-pages/)
 - [OpenWeather Geocoding API](https://openweathermap.org/api/geocoding-api)

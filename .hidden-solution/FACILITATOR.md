@@ -10,6 +10,16 @@ and reuse across presentation layers—not weather science.
 Complete this at least one day before delivery:
 
 - Verify the .NET 10 SDK and C# Dev Kit on the standard developer image.
+- Create or select a model deployment in Microsoft Foundry that supports tool
+  calling.
+- Give each participant least-privilege data-plane access to invoke the model
+  through their own Microsoft Entra identity. Do not distribute a shared key.
+- Share the deployment's Azure OpenAI endpoint and deployment name through the
+  approved workshop channel; these identifiers are configuration, not secrets.
+- Validate capacity for the expected concurrent participant count and define a
+  staggered test window if necessary.
+- Confirm `az login` and `DefaultAzureCredential` work on the standard developer
+  image and managed network.
 - Confirm the ASP.NET Core Web App (`webapp`) template is available.
 - Verify GitHub Copilot Agent mode and local MCP servers are allowed by policy.
 - Have participants activate OpenWeather keys in advance.
@@ -24,6 +34,11 @@ dotnet run --project .\solution\StormWatch.Smoke -- `
   .\starter\tests\fixtures\forecast.json
 ```
 
+- Configure `FOUNDRY_MODEL_ENDPOINT` and `FOUNDRY_MODEL_DEPLOYMENT`, then run
+  `StormWatch.FoundryClient` against the reference server using the fixture.
+  Confirm telemetry shows a StormWatch tool call rather than an ungrounded model
+  answer.
+
 - Rehearse the offline fallback in `TROUBLESHOOTING.md`.
 - Keep `solution/` closed unless recovery is needed.
 
@@ -36,6 +51,8 @@ Do not introduce patient, product, operational, or restricted data.
 - No API key appears in code, commands, chat, logs, or output.
 - The official C# SDK server advertises both tools over stdio.
 - One MCP call completes in Copilot Agent mode.
+- The facilitator-provided Foundry model invokes a participant-local MCP tool
+  through `StormWatch.FoundryClient`.
 - Output is labeled as an educational heuristic.
 
 ## Advanced Frontend Definition Of Done
@@ -55,7 +72,7 @@ Do not introduce patient, product, operational, or restricted data.
 | 0:20-0:35 | Treat thresholds as requirements and implement risk. | Eight risk tests pass. |
 | 0:35-0:44 | Complete CLI and inspect claims. | All 17 tests and fixture CLI pass. |
 | 0:44-0:54 | Explain SDK registration, attributes, and stdio. | Two tools appear in Copilot. |
-| 0:54-1:00 | Approve one invocation and review. | Names a limitation and guardrail. |
+| 0:54-1:00 | Compare one Copilot invocation with one Foundry-backed local-client invocation. | Proves both clients use the same local tools and names a limitation. |
 | 1:00-1:20 | Run advanced Task 7: scaffold Razor Pages and coach service reuse, browser trust boundaries, and responsive review. | Deterministic frontend result passes its completion gate. |
 
 Protect the final 16 minutes. Invoking a self-built official-SDK tool is the
@@ -94,6 +111,24 @@ methods return records so the SDK emits structured results.
 Stdio reserves stdout for protocol messages. The starter clears logging
 providers before running MCP mode. Local servers execute with the user's
 permissions, so pause on the proposed tool name and city before approval.
+
+### Microsoft Foundry Model
+
+The model is remote, but the agent loop and MCP client are local. The local C#
+client sends the model the available tool schemas, receives a tool-call request,
+executes that request against the participant's stdio server, and returns the
+tool result to the model. No public MCP endpoint or inbound laptop connection is
+needed.
+
+This deployment does not replace GitHub Copilot's selected model. It provides a
+second runtime client that proves MCP interoperability independently of Copilot.
+Use participant Entra identities for attribution, revocation, and least
+privilege. Tool arguments and results are model inputs, so keep the exercise on
+the synthetic fixture.
+
+If Foundry access, quota, or the venue network fails, retain the direct SDK
+protocol smoke as the MCP acceptance path. Do not weaken authentication, expose
+the stdio process publicly, or share a model key to recover the demo.
 
 ### Frontend
 
