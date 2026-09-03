@@ -37,16 +37,12 @@ Translate the requirements into a decision table before coding:
 
 The two tiers within wind, rain, and pressure are mutually exclusive.
 
-## Step 2: Ask Copilot for the Risk Boundary
+## Step 2: Write a Risk-Boundary Prompt
 
-Use:
-
-```text
-Implement only stormwatch/Risk.cs from README.md and RiskTests.cs. Keep tiered
-thresholds mutually exclusive, return a reason for every awarded indicator,
-reject an empty forecast, and make tie-breaking deterministic. Run RiskTests.
-Do not modify the tests or move scoring into another layer.
-```
+Write your own Copilot prompt for `Risk.cs`. It should point to the decision
+table and focused tests, constrain the change to the risk boundary, preserve
+explainability and determinism, and specify how the result will be verified.
+Do not tell Copilot to change tests or move scoring into another layer.
 
 ## Step 3: Review `ScorePoint`
 

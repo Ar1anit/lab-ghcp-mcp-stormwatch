@@ -10,6 +10,7 @@ Microsoft Foundry, then optionally present the same result in a web frontend.
 - **Advanced task:** 20 minutes
 - **Audience:** Developers with basic C# and Git familiarity
 - **Starting point:** Open `starter/` as the VS Code workspace root
+- **Task instructions:** Follow the [participant guide index](guides/README.md)
 - **Result:** A tested CLI, two structured MCP tools, a Foundry-model validation,
   and an optional Razor Pages frontend
 
@@ -20,7 +21,7 @@ Microsoft Foundry, then optionally present the same result in a web frontend.
 ## Rules
 
 - Use GitHub Copilot as a development partner, but decide what context and
-  instructions it needs.
+  instructions it needs. Write every Copilot prompt yourself.
 - Treat the existing tests and the outcomes below as the requirements.
 - Do not change tests merely to make an implementation pass.
 - Never place an OpenWeather API key in source, chat, commands, logs, or output.
@@ -28,8 +29,8 @@ Microsoft Foundry, then optionally present the same result in a web frontend.
 - Keep weather access, risk calculation, CLI presentation, and MCP transport as
   separate responsibilities.
 - Use the official `ModelContextProtocol` C# SDK for MCP behavior.
-- Use Microsoft Entra ID for Foundry model access; do not distribute model API
-  keys.
+- Load Foundry model access only from the ignored `.env` file supplied by the
+  facilitator; never commit, print, log, or paste its API key into chat.
 - Keep all user-facing risk output labeled as an educational heuristic.
 
 ## Runtime Architecture
@@ -47,7 +48,7 @@ Microsoft Foundry model <--- local C# Foundry client
           ^                         |
           | outbound HTTPS          +-- executes discovered MCP tools locally
           |
-participant Entra identity
+temporary workshop API key
 ```
 
 The laptop requires no inbound connection or public tunnel. The local client
@@ -58,21 +59,22 @@ data.
 
 ## Foundry Setup
 
-The facilitator provides one model deployment in Microsoft Foundry before the
-workshop. Each participant needs:
+The facilitator provides one model deployment in a dedicated Microsoft Foundry
+resource before the workshop. Each participant needs:
 
-- permission to invoke that deployment with their own Microsoft Entra identity;
-- Azure CLI authentication to the correct tenant;
-- the Azure OpenAI endpoint shown for the deployment; and
-- the deployment name, which can differ from the model family name.
+- a private `.env` file containing the Azure OpenAI endpoint, deployment name,
+  and temporary workshop API key; and
+- outbound HTTPS access to the endpoint.
 
-No shared model key is required. See [FOUNDRY.md](FOUNDRY.md) for the participant
-readiness check and the exact local-client command.
+Participants need no Azure credentials, subscription role, or Foundry portal
+access. The temporary key can invoke every deployment in its resource, so the
+facilitator must use a dedicated workshop resource and rotate the key after the
+session. See [FOUNDRY.md](FOUNDRY.md) for the readiness check and exact command.
 
 ## Starting Check
 
 From `starter/`, confirm that the .NET 10 SDK is available, both projects
-restore, and Foundry authentication succeeds. The untouched StormWatch starter
+restore, and Foundry API-key authentication succeeds. The untouched StormWatch starter
 must compile, discover 17 tests, and fail only at the four intentional
 implementation checkpoints. `StormWatch.FoundryClient` must build before the
 timed exercise begins.

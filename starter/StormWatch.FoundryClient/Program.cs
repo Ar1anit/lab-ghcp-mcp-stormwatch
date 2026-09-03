@@ -1,7 +1,9 @@
+using Azure;
 using Azure.AI.OpenAI;
-using Azure.Identity;
 using Microsoft.Extensions.AI;
 using ModelContextProtocol.Client;
+
+LoadDotEnv(Path.Combine(Environment.CurrentDirectory, ".env"));
 
 if (args.Length is < 2 or > 3)
 {
@@ -12,6 +14,7 @@ if (args.Length is < 2 or > 3)
 
 string endpoint = RequireEnvironmentVariable("FOUNDRY_MODEL_ENDPOINT");
 string deployment = RequireEnvironmentVariable("FOUNDRY_MODEL_DEPLOYMENT");
+string apiKey = RequireEnvironmentVariable("FOUNDRY_MODEL_API_KEY");
 string serverProject = Path.GetFullPath(args[0]);
 string fixturePath = Path.GetFullPath(args[1]);
 string city = args.Length == 3 ? args[2] : "Bengaluru";
@@ -50,7 +53,7 @@ if (!discoveredTools.SequenceEqual(expectedTools))
 }
 
 IChatClient chatClient = new ChatClientBuilder(
-        new AzureOpenAIClient(new Uri(endpoint), new DefaultAzureCredential())
+    new AzureOpenAIClient(new Uri(endpoint), new AzureKeyCredential(apiKey))
             .GetChatClient(deployment)
             .AsIChatClient())
     .UseFunctionInvocation()
@@ -85,4 +88,44 @@ static string RequireEnvironmentVariable(string name)
     }
 
     return value;
+}
+
+static void LoadDotEnv(string path)
+{
+    if (!File.Exists(path))
+    {
+        return;
+    }
+
+    int lineNumber = 0;
+    foreach (string line in File.ReadLines(path))
+    {
+        lineNumber++;
+        string trimmed = line.Trim();
+        if (trimmed.Length == 0 || trimmed.StartsWith('#'))
+        {
+            continue;
+        }
+
+        int separator = trimmed.IndexOf('=');
+        if (separator <= 0)
+        {
+            throw new InvalidOperationException(
+                $"Invalid .env entry on line {lineNumber}.");
+        }
+
+        string name = trimmed[..separator].Trim();
+        string value = trimmed[(separator + 1)..].Trim();
+        if (value.Length >= 2 &&
+            ((value[0] == '"' && value[^1] == '"') ||
+             (value[0] == '\'' && value[^1] == '\'')))
+        {
+            value = value[1..^1];
+        }
+
+        if (Environment.GetEnvironmentVariable(name) is null)
+        {
+            Environment.SetEnvironmentVariable(name, value);
+        }
+    }
 }

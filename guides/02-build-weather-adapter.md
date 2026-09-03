@@ -34,18 +34,13 @@ city
   -> Forecast and ForecastPoint records
 ```
 
-## Step 2: Ask Copilot for One Boundary
+## Step 2: Write a Focused Implementation Prompt
 
-Use:
-
-```text
-Implement only stormwatch/Weather.cs so WeatherTests passes. Use the injected
-HttpClient. Resolve the city through OpenWeather Direct Geocoding, then request
-the forecast by latitude and longitude with metric units. Use System.Text.Json,
-a finite cancellation timeout, useful errors, and invariant-culture numbers.
-Never include the API key or credential-bearing URL in an exception. Do not
-change tests or public records. Run only WeatherTests.
-```
+Write the Copilot prompt yourself. It should define `Weather.cs` as the change
+boundary, reference the selected requirements and tests, preserve the injected
+`HttpClient` and public records, protect credentials, and request focused
+verification. Decide how much implementation detail Copilot needs from the
+context rather than restating the entire solution in the prompt.
 
 If Copilot proposes edits outside `Weather.cs`, reject or narrow the change
 unless the facilitator confirms a real compile requirement.

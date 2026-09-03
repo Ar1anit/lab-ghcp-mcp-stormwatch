@@ -86,14 +86,11 @@ Read:
 - the three test classes; and
 - the four TODO files.
 
-Ask Copilot in Agent mode:
-
-```text
-Read README.md, stormwatch/Models.cs, stormwatch/Program.cs, the four TODO
-files, and StormWatch.Tests. Summarize the architecture, the four implementation
-checkpoints, and the security constraints. Do not edit. Explain which code is
-application logic and which code is MCP transport.
-```
+Write your own prompt asking Copilot to analyze the selected context without
+editing. Your prompt should make the expected analysis clear enough that you
+can check whether it identifies the four implementation checkpoints, the
+security constraints, and the boundary between application logic and MCP
+transport.
 
 Review the response against the source. Copilot should not move scoring into the
 MCP methods or suggest live API calls from tests.

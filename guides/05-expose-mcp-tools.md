@@ -41,17 +41,13 @@ In `StormWatchTools.cs`, identify:
 - `ForecastToolResult` and `AssessmentToolResult`; and
 - the existing domain services the methods should compose.
 
-## Step 2: Ask Copilot for Thin Wrappers
+## Step 2: Write a Thin-Adapter Prompt
 
-Use:
-
-```text
-Complete only the two TODO methods in stormwatch/StormWatchTools.cs. Keep the
-official ModelContextProtocol SDK attributes and structured record return types.
-Compose StormWatchDataService and StormRiskService; do not duplicate HTTP,
-parsing, or scoring logic. Preserve fixture fallback and cancellation. Do not
-return credentials or write to stdout. Build the project after editing.
-```
+Write your own Copilot prompt for the two TODO methods in
+`StormWatchTools.cs`. State the file and method boundary, official SDK and
+structured-result constraints, existing services to compose, credential and
+stdio rules, and the build evidence you expect. The prompt should describe the
+contract without supplying method bodies.
 
 ## Step 3: Review `get_forecast`
 

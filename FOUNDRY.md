@@ -10,31 +10,34 @@ the tools discovered from the participant's local StormWatch MCP server.
 - `StormWatch.FoundryClient` runs on the participant machine.
 - The StormWatch MCP server runs as a child process on the participant machine.
 - MCP traffic uses local stdio; Azure does not connect inbound to the laptop.
-- Model requests use outbound HTTPS and Microsoft Entra ID authentication.
+- Model requests use outbound HTTPS and a temporary workshop API key.
 
 This is separate from GitHub Copilot Chat. GitHub Copilot can test the same MCP
 server, but its model picker is not configured by this Foundry deployment.
 
 ## Participant Readiness
 
-The facilitator supplies the endpoint and deployment name. These values are not
-secrets, but access to the deployment is controlled through Azure RBAC.
+The facilitator privately supplies a `.env` file for a dedicated workshop
+resource. Participants do not need Azure credentials, an Azure role, or access
+to the Foundry portal.
 
 From `starter/`:
 
 ```powershell
-az login --tenant <tenant-id>
-az account show
-
-$env:FOUNDRY_MODEL_ENDPOINT = "https://<resource-name>.openai.azure.com/"
-$env:FOUNDRY_MODEL_DEPLOYMENT = "<deployment-name>"
-
 dotnet build .\StormWatch.FoundryClient\StormWatch.FoundryClient.csproj
 ```
 
-Do not put endpoint configuration or credentials in committed source. The
-client uses `DefaultAzureCredential`, which can use the participant's Azure CLI
-login during the workshop.
+Place the facilitator-supplied `.env` in the `starter/` directory. It contains:
+
+```dotenv
+FOUNDRY_MODEL_ENDPOINT=https://<dedicated-workshop-resource>.openai.azure.com/
+FOUNDRY_MODEL_DEPLOYMENT=<deployment-name>
+FOUNDRY_MODEL_API_KEY=<temporary-workshop-key>
+```
+
+The repository ignores `.env`. Never commit it, paste its key into Copilot
+Chat, include it in screenshots, or print it during troubleshooting. Process
+environment variables override matching `.env` entries.
 
 ## End-To-End Local Test
 
@@ -65,9 +68,10 @@ restricted data.
 
 ### Authentication failure
 
-Confirm that Azure CLI is signed into the tenant containing the Foundry resource
-and that the signed-in participant has data-plane permission to invoke the
-model. RBAC changes can take several minutes to propagate.
+Confirm that `.env` is in the directory from which the command is running and
+contains all three required names. Ask the facilitator for a replacement file
+if the key has expired or been rotated; do not send the key through chat or
+include it in diagnostic output.
 
 ### Deployment not found
 
@@ -92,3 +96,11 @@ The facilitator should size deployment capacity for concurrent participants and
 stagger the final validation if needed. Repeated retries can increase load and
 cost; use the direct SDK smoke test when model capacity is temporarily
 unavailable.
+
+## Facilitator Security Boundary
+
+An API key authorizes inference across the resource, not only one named model
+deployment. Use a disposable resource containing only workshop deployments,
+apply conservative quota and rate limits, distribute `.env` through an approved
+private channel, and regenerate both resource keys immediately after the
+workshop. Delete the resource when it is no longer needed.

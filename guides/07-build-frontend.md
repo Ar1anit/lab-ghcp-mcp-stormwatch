@@ -60,7 +60,7 @@ Keep the generated Razor Pages structure. The expected working files are:
 
 Do not add a frontend framework or third-party component library for this task.
 
-## Step 3: Give Copilot Focused Context
+## Step 3: Write a Frontend Prompt From Focused Context
 
 Open:
 
@@ -72,19 +72,11 @@ Open:
 - `StormWatch.Web/Pages/Index.cshtml.cs`; and
 - `StormWatch.Web/wwwroot/css/site.css`.
 
-Use this prompt:
-
-```text
-Create a server-rendered Razor Pages frontend in StormWatch.Web. Keep the
-existing project reference to stormwatch. The page must accept a city, call the
-injected StormWatchDataService with HttpContext.RequestAborted, assess the typed
-Forecast with StormRiskService, and render the resolved location, data source,
-five forecast periods, risk level, score, peak UTC time, evidence, and the full
-educational disclaimer. Validate blank input and show concise user-safe errors.
-Use semantic accessible HTML and responsive CSS. Do not copy weather, parsing,
-CLI rendering, or scoring logic. Do not expose credentials or call OpenWeather
-from browser code. Build the web project and run the existing tests.
-```
+Write your own Copilot prompt from this context and the task outcome. Define the
+server-rendered boundary, existing services and cancellation path to reuse,
+required result content, input and error behavior, accessibility expectations,
+credential restrictions, and executable verification. Leave visual design and
+implementation choices open where the requirements do not constrain them.
 
 Reject edits to the existing tests, thresholds, MCP tools, or weather transport
 unless Copilot identifies a concrete compile problem and you verify it.

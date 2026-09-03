@@ -35,15 +35,15 @@ Use the seven step-by-step guides during the timed lab. Tasks 1-6 form the
 frontend. Each guide ends with a completion gate that checks behavior, design,
 evidence, security, and understanding—not just whether a file was edited.
 
-1. [Orient and verify](guides/01-orient-and-verify.md) — 7 minutes
-2. [Build the weather adapter](guides/02-build-weather-adapter.md) — 13 minutes
-3. [Implement storm-risk rules](guides/03-implement-risk-rules.md) — 15 minutes
-4. [Complete the CLI](guides/04-complete-cli.md) — 9 minutes
-5. [Expose MCP tools](guides/05-expose-mcp-tools.md) — 10 minutes
-6. [Validate and review](guides/06-validate-and-review.md) — 6 minutes
-7. [Build a web frontend (advanced)](guides/07-build-frontend.md) — 20 minutes
+1. [Orient and verify](../guides/01-orient-and-verify.md) — 7 minutes
+2. [Build the weather adapter](../guides/02-build-weather-adapter.md) — 13 minutes
+3. [Implement storm-risk rules](../guides/03-implement-risk-rules.md) — 15 minutes
+4. [Complete the CLI](../guides/04-complete-cli.md) — 9 minutes
+5. [Expose MCP tools](../guides/05-expose-mcp-tools.md) — 10 minutes
+6. [Validate and review](../guides/06-validate-and-review.md) — 6 minutes
+7. [Build a web frontend (advanced)](../guides/07-build-frontend.md) — 20 minutes
 
-See [the participant guide index](guides/README.md) for the complete route,
+See [the participant guide index](../guides/README.md) for the complete route,
 working conventions, and recovery rules.
 
 ## Architecture
@@ -90,18 +90,18 @@ Code requests it through a masked MCP input.
 
 | Time | Checkpoint | Outcome |
 | --- | --- | --- |
-| 0:00-0:07 | [Orient and verify](guides/01-orient-and-verify.md) | Understand the red baseline and boundaries. |
-| 0:07-0:20 | [Build the weather adapter](guides/02-build-weather-adapter.md) | OpenWeather JSON becomes typed records. |
-| 0:20-0:35 | [Implement risk rules](guides/03-implement-risk-rules.md) | Scoring is deterministic and explainable. |
-| 0:35-0:44 | [Complete the CLI](guides/04-complete-cli.md) | City or fixture produces a safe report. |
-| 0:44-0:54 | [Implement MCP tools](guides/05-expose-mcp-tools.md) | Official SDK exposes two structured tools. |
-| 0:54-1:00 | [Validate and review](guides/06-validate-and-review.md) | Tests pass and one tool call is inspected. |
+| 0:00-0:07 | [Orient and verify](../guides/01-orient-and-verify.md) | Understand the red baseline and boundaries. |
+| 0:07-0:20 | [Build the weather adapter](../guides/02-build-weather-adapter.md) | OpenWeather JSON becomes typed records. |
+| 0:20-0:35 | [Implement risk rules](../guides/03-implement-risk-rules.md) | Scoring is deterministic and explainable. |
+| 0:35-0:44 | [Complete the CLI](../guides/04-complete-cli.md) | City or fixture produces a safe report. |
+| 0:44-0:54 | [Implement MCP tools](../guides/05-expose-mcp-tools.md) | Official SDK exposes two structured tools. |
+| 0:54-1:00 | [Validate and review](../guides/06-validate-and-review.md) | Tests pass and one tool call is inspected. |
 
 ## The 20-Minute Advanced Frontend Task
 
 | Time | Checkpoint | Outcome |
 | --- | --- | --- |
-| 1:00-1:20 | [Build a web frontend (advanced)](guides/07-build-frontend.md) | A responsive Razor Pages UI reuses the verified core and keeps credentials server-side. |
+| 1:00-1:20 | [Build a web frontend (advanced)](../guides/07-build-frontend.md) | A responsive Razor Pages UI reuses the verified core and keeps credentials server-side. |
 
 ## 0:00-0:07 - Orient And Verify
 
@@ -254,7 +254,7 @@ Run the frontend against `tests/fixtures/forecast.json`. The page should show
 the same deterministic Bengaluru result as the CLI while browser requests
 remain on localhost.
 
-Follow the full [advanced Task 7 guide](guides/07-build-frontend.md) for
+Follow the full [advanced Task 7 guide](../guides/07-build-frontend.md) for
 architecture, security, accessibility, responsive-layout, negative-path, and
 completion checks.
 

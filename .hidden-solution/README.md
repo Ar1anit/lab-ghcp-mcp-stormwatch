@@ -3,11 +3,10 @@
 This directory contains the original guided route, copy-ready Copilot prompts,
 progressive hints, implementation recovery guidance, and delivery notes.
 Participants should work from the repository root [challenge brief](../README.md)
-and derive their own prompts and implementation approach from its goals and
-acceptance criteria.
+and the visible [task guides](../guides/README.md), then derive their own prompts
+and implementation approach from the goals and acceptance criteria.
 
 - [Original full guided lab](FULL-GUIDE.md)
-- [Detailed guided task index](guides/README.md)
 - [Facilitator guide](FACILITATOR.md)
 - [Full recovery guide](TROUBLESHOOTING.md)
 

@@ -10,16 +10,16 @@ and reuse across presentation layers—not weather science.
 Complete this at least one day before delivery:
 
 - Verify the .NET 10 SDK and C# Dev Kit on the standard developer image.
-- Create or select a model deployment in Microsoft Foundry that supports tool
-  calling.
-- Give each participant least-privilege data-plane access to invoke the model
-  through their own Microsoft Entra identity. Do not distribute a shared key.
-- Share the deployment's Azure OpenAI endpoint and deployment name through the
-  approved workshop channel; these identifiers are configuration, not secrets.
+- Create a dedicated, disposable Microsoft Foundry resource containing only a
+  model deployment that supports tool calling.
+- Configure conservative quota and rate limits for the expected workshop load.
+- Create a `.env` containing `FOUNDRY_MODEL_ENDPOINT`,
+  `FOUNDRY_MODEL_DEPLOYMENT`, and `FOUNDRY_MODEL_API_KEY`. Distribute it only
+  through an approved private workshop channel.
 - Validate capacity for the expected concurrent participant count and define a
   staggered test window if necessary.
-- Confirm `az login` and `DefaultAzureCredential` work on the standard developer
-  image and managed network.
+- Confirm the ignored `.env` loads from `starter/` and the endpoint is reachable
+  from the standard developer image and managed network.
 - Confirm the ASP.NET Core Web App (`webapp`) template is available.
 - Verify GitHub Copilot Agent mode and local MCP servers are allowed by policy.
 - Have participants activate OpenWeather keys in advance.
@@ -34,8 +34,8 @@ dotnet run --project .\solution\StormWatch.Smoke -- `
   .\starter\tests\fixtures\forecast.json
 ```
 
-- Configure `FOUNDRY_MODEL_ENDPOINT` and `FOUNDRY_MODEL_DEPLOYMENT`, then run
-  `StormWatch.FoundryClient` against the reference server using the fixture.
+- Place the workshop `.env` in `starter/`, then run `StormWatch.FoundryClient`
+  against the reference server using the fixture.
   Confirm telemetry shows a StormWatch tool call rather than an ungrounded model
   answer.
 
@@ -48,7 +48,8 @@ Do not introduce patient, product, operational, or restricted data.
 
 - All 17 tests pass.
 - The fixture CLI reports `WARNING (100/100)` at `2026-08-30 06:00 UTC`.
-- No API key appears in code, commands, chat, logs, or output.
+- No API key appears in tracked source, commands, chat, logs, screenshots, or
+  output; the model key exists only in the ignored `.env`.
 - The official C# SDK server advertises both tools over stdio.
 - One MCP call completes in Copilot Agent mode.
 - The facilitator-provided Foundry model invokes a participant-local MCP tool
@@ -122,13 +123,18 @@ needed.
 
 This deployment does not replace GitHub Copilot's selected model. It provides a
 second runtime client that proves MCP interoperability independently of Copilot.
-Use participant Entra identities for attribution, revocation, and least
-privilege. Tool arguments and results are model inputs, so keep the exercise on
-the synthetic fixture.
+Participants need no Azure credentials or Foundry role. The shared workshop key
+is resource-wide rather than deployment-specific, so isolate it in a dedicated
+resource containing no non-workshop deployments. Tool arguments and results are
+model inputs, so keep the exercise on the synthetic fixture.
 
 If Foundry access, quota, or the venue network fails, retain the direct SDK
-protocol smoke as the MCP acceptance path. Do not weaken authentication, expose
-the stdio process publicly, or share a model key to recover the demo.
+protocol smoke as the MCP acceptance path. Do not expose the stdio process
+publicly or move the key outside the approved `.env` distribution path.
+
+Immediately after the workshop, regenerate both keys on the dedicated resource,
+remove the distributed `.env` files according to local policy, and delete the
+resource when it is no longer needed.
 
 ### Frontend
 

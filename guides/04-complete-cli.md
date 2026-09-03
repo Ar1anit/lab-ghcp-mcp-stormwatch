@@ -26,18 +26,12 @@ Open:
 The CLI composes existing services. It should not repeat JSON parsing or risk
 thresholds.
 
-## Step 2: Ask Copilot for the CLI
+## Step 2: Write a CLI Prompt
 
-Use:
-
-```text
-Implement only stormwatch/StormWatchApp.cs. Accept <city> [--fixture <path>].
-Fixture mode must not require OPENWEATHER_API_KEY. Print five forecast points,
-peak level, score, time, evidence, and the educational disclaimer. Handle
-expected errors with exit code 2, stderr, and no stack trace or secret. Compose
-the existing parser and risk service; do not duplicate their logic. Run
-AppTests, then all tests.
-```
+Write your own Copilot prompt for `StormWatchApp.cs`. Define the accepted
+command shapes, fixture and live behavior, safe output and error requirements,
+composition boundary, and expected verification. Make the prompt precise enough
+to review without prescribing the implementation.
 
 ## Step 3: Review Argument and Data-Source Handling
 

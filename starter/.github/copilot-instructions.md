@@ -6,8 +6,9 @@
 - Use the injected `HttpClient` and `System.Text.Json` for OpenWeather access.
 - Use the official `ModelContextProtocol` C# SDK for server registration, stdio
   transport, tool discovery, and tool attributes.
-- Keep the Foundry client separate from the MCP server. Authenticate model
-  access with `DefaultAzureCredential`; never add or request a shared model key.
+- Keep the Foundry client separate from the MCP server. Read model endpoint,
+  deployment, and API key only from environment variables loaded from the
+  ignored `.env`; never print, log, return, commit, or request the key in chat.
 - Never place, print, log, return, or commit an OpenWeather API key. Read it only
   from `OPENWEATHER_API_KEY` or the masked VS Code MCP input.
 - Unit tests must use synthetic fixtures or mocks and must never call a live API.

@@ -39,14 +39,13 @@ Inspect the output rather than checking only the exit code. Confirm:
 - all four peak indicators are explained; and
 - the educational and non-official warning is present.
 
-## Step 3: Inspect and Approve One MCP Invocation
+## Step 3: Write and Approve One MCP Invocation Request
 
-In Copilot Agent mode, ask:
-
-```text
-Use stormwatch assess_storm_risk for Bengaluru. State the peak time, score,
-level, and evidence. Label it as an educational signal, not an official warning.
-```
+Write your own request in Copilot Agent mode. It should require current
+StormWatch evidence for Bengaluru, make the expected claims inspectable, and
+retain the educational-use qualification. Do not name a tool unless you intend
+to test explicit tool selection; observe whether your wording leads Copilot to
+choose the appropriate StormWatch capability.
 
 Before approving the proposed call:
 
@@ -82,17 +81,30 @@ Investigate any changed test, model, project, configuration, fixture, or
 instruction file. Such a change may be valid, but it requires a specific reason
 and should not merely make a failing implementation pass.
 
-Ask Copilot for a focused review:
+Write your own focused review prompt. Bound it to the completed project and
+requirements, request concrete file-grounded findings in the relevant quality
+categories, and require a clear response when no finding exists. Verify each
+finding against the code before acting.
 
-```text
-Review the completed project against README.md. List only concrete correctness,
-security, MCP contract, or test coverage gaps. Cite files. If there are no
-findings, say so and name the largest remaining limitation.
+## Step 5: Validate Through the Foundry Model
+
+Place the private `.env` supplied by the facilitator in the `starter/`
+directory. Do not open it in Copilot Chat, commit it, print it, or include it in
+a screenshot. It provides the dedicated workshop endpoint, deployment name,
+and temporary API key. Then run:
+
+```powershell
+dotnet run --project .\StormWatch.FoundryClient -- `
+      .\stormwatch\StormWatch.csproj `
+      .\tests\fixtures\forecast.json `
+      Bengaluru
 ```
 
-Verify each finding against the code before acting.
+Confirm that the client discovers both local tools and that the response is
+grounded in a local tool result. This model deployment is separate from the
+model used by GitHub Copilot.
 
-## Step 5: State What the Evidence Does Not Prove
+## Step 6: State What the Evidence Does Not Prove
 
 Choose at least one limitation and explain it:
 
@@ -116,12 +128,16 @@ following are true:
       peak `2026-08-30 06:00 UTC`, evidence, and the safety disclaimer.
 - [ ] VS Code advertises both MCP tools, and one deliberately reviewed
       `assess_storm_risk` invocation completes in Copilot Agent mode.
+- [ ] The Foundry-backed local client discovers both tools and produces a
+      fixture-grounded response using the facilitator-provided model.
 - [ ] The MCP result is structured, matches the selected data source, and is not
       presented as an official or reliable prediction.
 - [ ] The final diff is free of whitespace errors and contains only changes you
       can justify; tests were not weakened to obtain a pass.
 - [ ] No OpenWeather key appears in source, configuration, chat, commands, logs,
       exceptions, screenshots, Git history, or tool output.
+- [ ] The Foundry workshop key remains only in the ignored `.env` file and does
+      not appear in source, chat, commands, logs, screenshots, or Git history.
 - [ ] Weather transport, scoring, CLI rendering, and MCP transport remain
       separate and compose through the existing records and services.
 - [ ] You can explain what each verification step proves and name at least one
@@ -130,7 +146,8 @@ following are true:
       when the server and tool were created locally.
 
 **Final evidence set:** the 17-test summary, fixture CLI output, discovered tool
-schemas, one inspected MCP result, the reviewed diff, and one stated limitation.
+schemas, one inspected Copilot MCP result, one Foundry-backed result, the
+reviewed diff, and one stated limitation.
 
 Continue to [Advanced Task 7: Build a web frontend](07-build-frontend.md), or
 return to the [participant guide index](README.md) if you are completing only

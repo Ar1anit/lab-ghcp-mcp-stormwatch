@@ -34,10 +34,16 @@ Each task follows the same pattern:
 
 1. Read the outcome and constraints.
 2. Give Copilot only the listed working context.
-3. Use the suggested prompt as a starting point.
+3. Write your own prompt for the task. Include the intended outcome, change
+  boundary, constraints, and verification you expect Copilot to perform.
 4. Inspect the proposed change before accepting it.
 5. Run the focused verification command.
 6. Evaluate every item in the completion gate.
+
+The guides deliberately do not provide copy-ready prompts. Prompt design is
+part of the exercise: decide what context Copilot needs, make the requested
+scope testable, and refine your prompt when the resulting evidence exposes a
+gap.
 
 The completion gates are deliberately stronger than “the file exists.” They ask
 whether the behavior is correct, the design boundary is preserved, security
@@ -81,6 +87,8 @@ At the end of 60 minutes, you should have evidence that:
 - no credential appears in source, chat, logs, commands, or output;
 - the SDK advertises `get_forecast` and `assess_storm_risk`;
 - one MCP invocation returns structured data in Copilot Agent mode; and
+- the Foundry-backed local client can offer the same tools to the shared model;
+  and
 - you can explain at least one limitation that tests do not remove.
 
 ## Frontend Outcome
