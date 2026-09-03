@@ -1,118 +1,78 @@
-# StormWatch Troubleshooting
+# StormWatch Environment Troubleshooting
 
-Start with the smallest failing boundary: .NET, tests, OpenWeather, MCP server,
-or Copilot invocation. Never paste credentials or unfiltered logs into chat.
+Use this page only for environment, package restore, network, fixture, and MCP
+startup failures. Implementation decisions are part of the challenge.
+
+Never paste credentials or unfiltered logs into Copilot Chat.
 
 ## .NET Environment
 
 ### `dotnet` is not recognized
 
 Install the .NET 10 SDK from <https://dotnet.microsoft.com/download/dotnet/10.0>,
-then restart VS Code and verify:
+restart VS Code, and verify that `dotnet --list-sdks` includes a 10.x SDK.
 
-```powershell
-dotnet --info
-```
+### Restore fails
 
-An older runtime alone is insufficient; `dotnet --list-sdks` must include 10.x.
+Confirm that the venue network permits access to the NuGet sources configured
+for the repository. On a managed network, use only the package source and
+certificate configuration approved by your organization. Do not disable TLS
+verification.
 
-### Restore or package errors
+The project uses the committed `ModelContextProtocol` package version. A restore
+failure is an environment issue, not an implementation task.
 
-```powershell
-dotnet nuget locals all --clear
-dotnet restore .\StormWatch.Tests\StormWatch.Tests.csproj
-```
+## Starter Baseline
 
-The lab targets `ModelContextProtocol` `0.4.0-preview.3`. Prerelease SDK APIs can
-change; use the committed package version during the workshop.
+The untouched starter must:
 
-## Expected Red Tests
+- compile successfully;
+- discover 17 tests; and
+- fail at the four intentional incomplete methods.
 
-The untouched starter compiles and fails with `NotImplementedException` at four
-TODO checkpoints. Collection failures, missing fixtures, restore errors, and C#
-compiler errors are setup defects.
+A missing fixture, test discovery failure, package restore error, or compiler
+error before any participant edit is a setup problem. Ask the facilitator for a
+clean starter copy.
 
-```powershell
-dotnet test .\StormWatch.Tests\StormWatch.Tests.csproj --filter FullyQualifiedName~WeatherTests
-dotnet test .\StormWatch.Tests\StormWatch.Tests.csproj --filter FullyQualifiedName~RiskTests
-dotnet test .\StormWatch.Tests\StormWatch.Tests.csproj --filter FullyQualifiedName~AppTests
-```
-
-## OpenWeather
+## OpenWeather Access
 
 ### HTTP 401
 
-- Wait for a newly created key to activate.
-- Confirm Geocoding and 5 Day / 3 Hour Forecast access.
-- Re-enter the masked MCP input; never hard-code the key.
-
-### HTTP 404 or location not found
-
-Use a less ambiguous city such as `Bengaluru,IN`. The adapter must geocode first
-and call the forecast API with coordinates.
+- Allow time for a newly created key to activate.
+- Confirm that the key can access Direct Geocoding and 5 Day / 3 Hour Forecast.
+- Re-enter it through the masked VS Code input.
+- Never hard-code or print the key.
 
 ### HTTP 429, proxy, certificate, or timeout
 
-Stop repeated retries. Use the approved organizational proxy/certificate setup;
-do not disable TLS. Switch to fixture mode for a deterministic offline path.
+Stop repeated retries. Use the proxy, certificate, and package/network routes
+approved by your organization. Do not disable TLS verification.
 
-## Offline MCP Fallback
+The supplied fixture is the deterministic offline acceptance path when live
+OpenWeather access is unavailable.
 
-In `.vscode/mcp.json`, replace the server `env` object with:
-
-```json
-"env": {
-  "STORMWATCH_FIXTURE_PATH": "${workspaceFolder}/tests/fixtures/forecast.json"
-}
-```
-
-Restart `stormwatch` from **MCP: List Servers**. Both tools now use the synthetic
-Bengaluru data without requesting a key. Restore the masked key configuration
-before demonstrating live data.
-
-## MCP Server
+## MCP Startup
 
 ### Server is not listed
 
-- Open `starter/` as the workspace root.
-- Run **MCP: Open Workspace Folder Configuration** and inspect `.vscode/mcp.json`.
-- Run **MCP: List Servers**, select `stormwatch`, then start or restart it.
-- Confirm local MCP servers are allowed by organizational policy.
+- Confirm that `starter/` is the open VS Code workspace root.
+- Confirm that `.vscode/mcp.json` exists.
+- Confirm that local MCP servers are permitted by organizational policy.
+- Open **MCP: List Servers** and inspect the `stormwatch` server status.
 
-### Server exits immediately
+### Server fails before tool discovery
 
-```powershell
-dotnet build .\StormWatch\StormWatch.csproj
-dotnet run --project .\StormWatch -- --mcp
-```
+Verify that the StormWatch project builds. Then inspect the server output for
+package, executable, configuration, or policy errors. Do not share output until
+credentials and local identifiers have been removed.
 
-The second command waits silently for protocol input. Stop it with `Ctrl+C`.
-Use **MCP: List Servers > stormwatch > Show Output** for SDK startup failures.
+### Tools still show an older schema
 
-### JSON-RPC or protocol parsing errors
+Restart the `stormwatch` server and start a fresh Copilot Chat so VS Code can
+rediscover the current tool definitions.
 
-Do not call `Console.WriteLine` in MCP mode. Stdout carries protocol messages.
-Diagnostics must go to stderr, and logging providers should remain cleared.
+## Credential Incident
 
-### Tools do not update
-
-Restart the server so VS Code rediscovers schemas. If needed, clear cached tools
-through the server action and restart Chat.
-
-### Tools throw `NotImplementedException`
-
-The server can discover attributed methods before their TODO bodies are done.
-Complete both methods in `StormWatchTools.cs`, rebuild, and restart the server.
-
-## Copilot Invocation
-
-- Use Agent mode and enable only the needed StormWatch tool.
-- Name the tool explicitly if another weather server is installed.
-- Read the city argument before approval.
-- A live `low` result is valid; use the fixture for a deterministic warning.
-
-## Credential Cleanup
-
-If a key reaches source, a command, chat, or screenshot, rotate it in
-OpenWeather. Deleting visible text is not sufficient after exposure. The app
-does not load `.env`; the masked VS Code MCP input is the supported live path.
+If an API key appears in source, chat, a command, a log, or a screenshot, rotate
+it in OpenWeather immediately. Removing the visible text is not sufficient after
+exposure.
