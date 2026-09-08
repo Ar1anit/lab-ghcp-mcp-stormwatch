@@ -6,21 +6,11 @@
       "args": [
         "run",
         "--project",
-        "${workspaceFolder}/StormWatch/StormWatch.csproj",
+        "${workspaceFolder}/stormwatch/StormWatch.csproj",
         "--",
         "--mcp"
       ],
-      "env": {
-        "OPENWEATHER_API_KEY": "${input:openweather-api-key}"
-      }
+      "envFile": "${workspaceFolder}/.env.openweather"
     }
-  },
-  "inputs": [
-    {
-      "type": "promptString",
-      "id": "openweather-api-key",
-      "description": "OpenWeather API key",
-      "password": true
-    }
-  ]
+  }
 }

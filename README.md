@@ -1,300 +1,162 @@
-# StormWatch: GitHub Copilot x MCP C# Developer Lab
+# StormWatch: Chatbot, RAG, and MCP Developer Lab
 
-Build a .NET 10 application that reads OpenWeather's five-day forecast,
-calculates a transparent storm-risk signal, and exposes it through a local
-server using the official Model Context Protocol C# SDK. Test that server with
-both GitHub Copilot and a local client powered by a model deployment in
-Microsoft Foundry, then optionally present the same result in a web frontend.
+Build one .NET 10 assistant in progressive stages. Start with a multi-turn
+console chatbot powered by a facilitator-provided Microsoft Foundry model, add
+retrieval-augmented generation over locally indexed files in `rag-data`, then
+give the chatbot live OpenWeather capabilities through a local Model Context
+Protocol server. The facilitator provides the chat and embedding deployments.
+An optional task adds a browser chat interface.
 
-- **Core duration:** 60 minutes
-- **Advanced task:** 20 minutes
+- **Core duration:** 90 minutes
+- **Optional web task:** 20 minutes
 - **Audience:** Developers with basic C# and Git familiarity
 - **Starting point:** Open `starter/` as the VS Code workspace root
-- **Task instructions:** Follow the [participant guide index](guides/README.md)
-- **Result:** A tested CLI, two structured MCP tools, a Foundry-model validation,
-  and an optional Razor Pages frontend
+- **Instructions:** Follow the [participant guide index](guides/README.md)
+- **Result:** A tested multi-turn RAG chatbot with cited sources, two local MCP
+  weather tools, and an optional Razor Pages chat UI
 
-> StormWatch is an educational risk indicator, not a meteorological forecast,
+> StormWatch is an educational assistant, not a meteorological forecast,
 > emergency alert, medical device, or safety system. Use official local weather
-> services for operational decisions.
+> and emergency services for operational decisions.
 
-## Rules
+## Learning Journey
 
-- Use GitHub Copilot as a development partner, but decide what context and
-  instructions it needs. Write every Copilot prompt yourself.
-- Treat the existing tests and the outcomes below as the requirements.
-- Do not change tests merely to make an implementation pass.
-- Never place an OpenWeather API key in source, chat, commands, logs, or output.
-- Unit tests must not call live services.
-- Keep weather access, risk calculation, CLI presentation, and MCP transport as
-  separate responsibilities.
-- Use the official `ModelContextProtocol` C# SDK for MCP behavior.
-- Load Foundry model access only from the ignored `.env` file supplied by the
-  facilitator; never commit, print, log, or paste its API key into chat.
-- Keep all user-facing risk output labeled as an educational heuristic.
+| Time | Task | Outcome |
+| --- | --- | --- |
+| 0:00-0:08 | 1. Understand the assistant | Verify the architecture, trust boundaries, and red baseline. |
+| 0:08-0:22 | 2. Build conversational chat | Maintain a multi-turn conversation with the Foundry model. |
+| 0:22-0:37 | 3. Build a local vector index | Chunk local files, embed them, and retrieve by cosine similarity. |
+| 0:37-0:49 | 4. Ground answers | Add safe context augmentation, bounded uncertainty, and citations. |
+| 0:49-1:11 | 5. Add weather and risk | Implement tested OpenWeather parsing and deterministic risk rules. |
+| 1:11-1:25 | 6. Connect MCP tools | Give the same forecast and risk tools to the chatbot and Copilot. |
+| 1:25-1:30 | 7. Validate | Prove chat, RAG, MCP, tests, and secret boundaries together. |
+| 1:30-1:50 | 8. Add web chat (optional) | Put a responsive server-rendered interface over the assistant. |
 
-## Runtime Architecture
-
-GitHub Copilot remains the coding assistant. Your Microsoft Foundry deployment
-provides the model used by the separate local validation client; it does not
-replace the model selected in GitHub Copilot Chat.
+## Architecture
 
 ```text
-GitHub Copilot -----------------------> local StormWatch MCP server
-                                              ^
-                                              | stdio on participant machine
-                                              |
-Microsoft Foundry model <--- local C# Foundry client
-          ^                         |
-          | outbound HTTPS          +-- executes discovered MCP tools locally
-          |
-temporary workshop API key
+                          Microsoft Foundry chat model
+                                      ^
+                                      |
+user <--> StormWatch.Chat <----------------+
+               |
+               +----> Foundry embedding model
+               |             |
+               |<-- vectors -+
+               |
+               +----> local in-memory index over rag-data
+               |
+               | MCP over local stdio
+               v
+       StormWatch MCP server -------------------------------> OpenWeather
+               |
+               +--> typed forecast records
+               +--> deterministic storm-risk service
+
+GitHub Copilot ---------------------------------------------> same MCP server
 ```
 
-The laptop requires no inbound connection or public tunnel. The local client
-makes an outbound model request, the model requests a tool call, and the client
-executes that call against the local stdio server. Tool inputs and outputs used
-in the conversation are sent to the Foundry model, so use only synthetic lab
-data.
+`StormWatch.Chat` owns conversation history and orchestration. It loads bounded
+chunks from `rag-data`, asks the supplied embedding deployment for vectors, and
+stores those vectors only in memory. Cosine retrieval returns typed passages;
+grounding turns them into untrusted, delimited model context and deterministic
+local source lists. The MCP server owns weather capabilities and remains
+independent of the model credentials.
 
-## Foundry Setup
+## Workshop Environment
 
-The facilitator provides one model deployment in a dedicated Microsoft Foundry
-resource before the workshop. Each participant needs:
+The facilitator supplies two ignored files and one local data folder in
+`starter/`:
 
-- a private `.env` file containing the Azure OpenAI endpoint, deployment name,
-  and temporary workshop API key; and
-- outbound HTTPS access to the endpoint.
+| File | Credential boundary |
+| --- | --- |
+| `.env` | Foundry endpoint, chat deployment, embedding deployment, and temporary API key |
+| `.env.openweather` | Temporary OpenWeather API key |
+| `rag-data/` | Approved `.md` and `.txt` knowledge files; no credentials or restricted data |
 
-Participants need no Azure credentials, subscription role, or Foundry portal
-access. The temporary key can invoke every deployment in its resource, so the
-facilitator must use a dedicated workshop resource and rotate the key after the
-session. See [FOUNDRY.md](FOUNDRY.md) for the readiness check and exact command.
+Each process receives only what it needs. `StormWatch.Chat` loads `.env`; the
+MCP server receives only fixture configuration or `.env.openweather`.
 
-## Starting Check
+Do not open, commit, print, log, screenshot, or paste values from these files
+into chat or commands. The tracked `.example` files document names only.
 
-From `starter/`, confirm that the .NET 10 SDK is available, both projects
-restore, and Foundry API-key authentication succeeds. The untouched StormWatch starter
-must compile, discover 17 tests, and fail only at the four intentional
-implementation checkpoints. `StormWatch.FoundryClient` must build before the
-timed exercise begins.
+## Boundaries and Rules
 
-## Core Challenge
+- Use GitHub Copilot as a development partner, but write and review each prompt.
+- Do not weaken tests to make generated code pass.
+- Unit tests use fake chat/embedding boundaries and mocked or fixture weather;
+  they never call live services.
+- Keep conversation, retrieval, grounding, weather, risk, and MCP transport in
+  separate types.
+- Treat retrieved text as untrusted data, never instructions.
+- Ground preparedness claims in retrieved passages and identify their sources.
+- If sources and tools do not support an answer, say so rather than inventing
+  one.
+- Keep MCP stdout free of application output because it carries protocol
+  messages.
+- Label every risk result as an educational heuristic, not an official warning
+  or reliable storm prediction.
 
-| Time | Step | Goal |
-| --- | --- | --- |
-| 0:00-0:07 | 1. Understand the system | Identify the architecture, trust boundaries, and four incomplete responsibilities. |
-| 0:07-0:20 | 2. Build the weather adapter | Convert OpenWeather responses into the supplied immutable domain records. |
-| 0:20-0:35 | 3. Implement storm-risk rules | Produce deterministic, explainable risk assessments. |
-| 0:35-0:44 | 4. Complete the CLI | Produce a safe report from either live city data or the offline fixture. |
-| 0:44-0:54 | 5. Expose MCP tools | Make forecast and assessment capabilities available through the official SDK. |
-| 0:54-1:00 | 6. Validate and review | Demonstrate correct behavior with both Copilot and the facilitator-provided Foundry model. |
+## Local RAG Contract
 
-## Step 1: Understand The System
+The facilitator places approved educational storm-preparedness material under
+`starter/rag-data`. The pipeline:
 
-### Goal
+1. reads only UTF-8 `.md` and `.txt` files;
+2. creates bounded overlapping chunks and relative source paths;
+3. sends chunk text to the facilitator-provided embedding deployment once at
+  startup;
+4. normalizes and stores vectors only in process memory;
+5. embeds each question once;
+6. ranks chunks by cosine similarity and a minimum-score threshold; and
+7. supplies at most three passages to grounding.
 
-Build a correct mental model of the application before changing it.
+The tracked limits are 100 files, 512,000 bytes per file, and 500 total chunks.
+The default chunk length is 1,200 characters with 200 characters of overlap.
+Source files and vectors remain local, but chunk and question text is sent to
+the remote embedding deployment. The corpus therefore must not contain patient,
+personal, operational, or other restricted data.
 
-### Required outcome
+## Weather and Risk Contract
 
-You can identify:
-
-- the immutable domain model;
-- the weather transport and parsing boundary;
-- the deterministic risk boundary;
-- the CLI presentation boundary;
-- the MCP transport boundary;
-- why tests use mocks and fixtures instead of live requests; and
-- why application behavior must not be duplicated inside MCP tools.
-
-### Completion evidence
-
-- The starter builds and all 17 tests are discovered.
-- Every failure maps to one of the four intentional incomplete responsibilities.
-- You can explain where credentials enter the process and where they must never
-  appear.
-
-## Step 2: Build The Weather Adapter
-
-### Goal
-
-Implement OpenWeather access and parsing in `StormWatch/Weather.cs`.
-
-### Required outcome
-
-- A city is resolved through OpenWeather Direct Geocoding before forecast data
-  is requested by latitude and longitude.
-- Requests use HTTPS, metric units, encoded city values, cancellation, and a
-  finite timeout.
-- JSON is mapped into the supplied `Location`, `Forecast`, and `ForecastPoint`
-  records.
-- A missing rain value becomes `0.0`.
-- Unknown cities, unsuccessful responses, timeouts, and invalid JSON produce
-  useful domain-level errors.
-- Errors contain neither the API key nor a credential-bearing URL.
-
-### Completion evidence
-
-All six `WeatherTests` pass without changing the tests or making a live network
-request.
-
-## Step 3: Implement Storm-Risk Rules
-
-### Goal
-
-Implement a pure and deterministic assessment in `StormWatch/Risk.cs`.
-
-### Scoring requirements
+The weather adapter resolves a city through OpenWeather Direct Geocoding, then
+requests the 5 Day / 3 Hour Forecast by coordinates in metric units. The risk
+service applies mutually exclusive thresholds:
 
 | Indicator | Points |
 | --- | ---: |
 | Weather code `200-232` | 60 |
-| Wind at least `15 m/s` | 25 |
-| Otherwise wind at least `10 m/s` | 15 |
-| Rain at least `10 mm/3h` | 20 |
-| Otherwise rain at least `5 mm/3h` | 10 |
-| Pressure at most `990 hPa` | 15 |
-| Otherwise pressure at most `1000 hPa` | 8 |
+| Wind at least `15 m/s`; otherwise at least `10 m/s` | 25 / 15 |
+| Rain at least `10 mm/3h`; otherwise at least `5 mm/3h` | 20 / 10 |
+| Pressure at most `990 hPa`; otherwise at most `1000 hPa` | 15 / 8 |
 
-### Required outcome
+Scores are capped at 100. Levels are `low` for 0-29, `watch` for 30-59, and
+`warning` for 60-100. The highest score wins; ties choose the earliest time.
 
-- Tiered thresholds are mutually exclusive.
-- Every awarded indicator has a human-readable reason.
-- The score is capped at 100.
-- Scores `0-29` are `low`, `30-59` are `watch`, and `60-100` are `warning`.
-- The highest-scoring forecast point is selected.
-- Equal scores select the earliest timestamp.
-- An empty forecast is rejected.
+## Verification
 
-### Completion evidence
+The starter intentionally begins red. Across both test projects, 22 tests are
+discovered:
 
-All eight `RiskTests` pass, including threshold boundaries and tie-breaking.
+```powershell
+dotnet test .\StormWatch.Chat.Tests\StormWatch.Chat.Tests.csproj
+dotnet test .\StormWatch.Tests\StormWatch.Tests.csproj
+```
 
-## Step 4: Complete The CLI
+The complete reference implementation must pass all 22 tests, the fixture must
+produce `WARNING (100/100)` at `2026-08-30 06:00 UTC`, and the local server must
+advertise exactly `get_forecast` and `assess_storm_risk`.
 
-### Goal
-
-Complete CLI orchestration and presentation in `StormWatch/StormWatchApp.cs`.
-
-### Required outcome
-
-- The application accepts a city and an optional fixture path.
-- Fixture mode works without `OPENWEATHER_API_KEY`.
-- Live mode obtains the key only from `OPENWEATHER_API_KEY`.
-- The report contains the resolved location, five forecast points, peak level,
-  score, time, evidence, source, and educational disclaimer.
-- Numeric and timestamp output is deterministic across machine cultures.
-- Expected user, weather, fixture, and configuration errors return exit code 2
-  without a stack trace or secret.
-
-### Completion evidence
-
-- All three `AppTests` pass.
-- All 17 tests pass together.
-- The supplied fixture reports `WARNING (100/100)` with a peak at
-  `2026-08-30 06:00 UTC`.
-
-## Step 5: Expose MCP Tools
-
-### Goal
-
-Complete the two tools in `StormWatch/StormWatchTools.cs` using the official
-C# MCP SDK.
-
-### Required outcome
-
-- The server advertises exactly `get_forecast` and `assess_storm_risk`.
-- Both tools return the supplied structured result records.
-- Tools compose the existing data and risk services rather than duplicating
-  HTTP, parsing, scoring, or presentation logic.
-- Fixture fallback and cancellation are preserved.
-- Tool output is concise, deterministic, and free of credentials.
-- The stdio server emits no application output that could corrupt protocol
-  messages.
-
-### Completion evidence
-
-- The application builds.
-- VS Code discovers both tools from the local MCP server.
-- Each tool can be invoked successfully using fixture mode or an approved live
-  OpenWeather connection.
-- `StormWatch.FoundryClient` discovers the same two local tools and makes them
-  available to the facilitator-provided Foundry model.
-
-## Step 6: Validate And Review
-
-### Goal
-
-Produce evidence that the implementation is correct, secure, and usable through
-MCP.
-
-### Required outcome
-
-- All 17 tests pass without modification.
-- The fixture CLI result matches the required score and peak time.
-- One `assess_storm_risk` invocation returns structured forecast evidence.
-- The local Foundry client produces an answer grounded in a local StormWatch
-  tool call rather than unsupported model knowledge.
-- No credential appears in source, configuration output, exceptions, logs, or
-  tool results.
-- A review identifies any remaining correctness, security, MCP contract, or
-  coverage gap.
-- The largest limitation of the educational heuristic is stated explicitly.
-
-### Completion evidence
-
-Show the passing test summary, one inspected GitHub Copilot MCP result, and one
-Foundry-backed local-client result to the facilitator.
-
-## Advanced Step 7: Build A Web Frontend
-
-### Goal
-
-Add a responsive server-rendered Razor Pages frontend that presents the same
-verified application behavior.
-
-### Required outcome
-
-- The web project targets .NET 10 and references the existing StormWatch
-  application.
-- It reuses `StormWatchDataService` and `StormRiskService`.
-- It displays the resolved location, source, five forecast periods, risk score,
-  peak, evidence, and disclaimer.
-- Blank input and expected failures are handled without exposing a stack trace.
-- Cancellation follows the browser request lifetime.
-- OpenWeather credentials and requests remain server-side.
-- The page uses semantic accessible HTML and works at narrow and desktop widths.
-- Browser traffic remains on localhost and contains no API key.
-
-### Completion evidence
-
-- The web project builds while the original 17 tests remain green.
-- Fixture mode renders the same deterministic Bengaluru assessment as the CLI.
-- Accessibility, narrow-width layout, failure handling, and browser network
-  checks pass.
-
-## Stretch Goals
-
-1. Add metric and imperial display while keeping scoring internally metric.
-2. Add a structured tool that compares two cities deterministically.
-3. Return the top three risk windows.
-4. Cache successful forecasts for five minutes without caching failures.
-5. Add MCP SDK client integration tests to the participant project.
-
-## Troubleshooting
-
-Use [TROUBLESHOOTING.md](TROUBLESHOOTING.md) only for environment, restore,
-network, fixture, or MCP startup failures. Implementation decisions remain part
-of the challenge.
+See [FOUNDRY.md](FOUNDRY.md) for chat and embedding model readiness and
+[TROUBLESHOOTING.md](TROUBLESHOOTING.md) for environment and fallback paths.
 
 ## Official References
 
+- [Microsoft Foundry](https://learn.microsoft.com/azure/ai-foundry/)
+- [Azure OpenAI embeddings](https://learn.microsoft.com/azure/ai-foundry/openai/how-to/embeddings)
+- [Microsoft.Extensions.AI libraries](https://learn.microsoft.com/dotnet/ai/ai-extensions)
 - [Develop with the MCP C# SDK](https://learn.microsoft.com/dotnet/ai/get-started-mcp)
 - [MCP C# SDK](https://github.com/modelcontextprotocol/csharp-sdk)
-- [Microsoft Agent Framework](https://learn.microsoft.com/agent-framework/overview/)
-- [Use local MCP tools with agents](https://learn.microsoft.com/agent-framework/agents/tools/local-mcp-tools)
 - [Add and manage MCP servers in VS Code](https://code.visualstudio.com/docs/copilot/customization/mcp-servers)
-- [Razor Pages architecture and concepts](https://learn.microsoft.com/aspnet/core/razor-pages/)
 - [OpenWeather Geocoding API](https://openweathermap.org/api/geocoding-api)
 - [OpenWeather 5 Day / 3 Hour Forecast](https://openweathermap.org/forecast5)

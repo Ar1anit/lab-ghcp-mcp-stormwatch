@@ -40,7 +40,7 @@ public sealed class StormWatchTools(StormWatchDataService dataService)
         CancellationToken cancellationToken)
     {
         _ = dataService;
-        // TODO 4: Compose the existing application service; do not duplicate parsing.
+        // TODO 6: Compose the existing application service; do not duplicate parsing.
         throw new NotImplementedException();
     }
 
@@ -51,7 +51,7 @@ public sealed class StormWatchTools(StormWatchDataService dataService)
         CancellationToken cancellationToken)
     {
         _ = dataService;
-        // TODO 4: Compose the existing risk service; return structured evidence.
+        // TODO 6: Compose the existing risk service; return structured evidence.
         throw new NotImplementedException();
     }
 }

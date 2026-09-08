@@ -26,7 +26,7 @@ public sealed class OpenWeatherClient
         string city,
         CancellationToken cancellationToken = default)
     {
-        // TODO 1: Geocode the city, request metric forecast data, and parse it.
+        // TODO 5: Geocode the city, request metric forecast data, and parse it.
         throw new NotImplementedException();
     }
 }
@@ -35,13 +35,13 @@ public static class WeatherParser
 {
     public static Location ParseLocation(JsonElement payload)
     {
-        // TODO 1: Validate and map the first direct-geocoding result.
+        // TODO 5: Validate and map the first direct-geocoding result.
         throw new NotImplementedException();
     }
 
     public static Forecast ParseForecast(JsonElement payload, Location location)
     {
-        // TODO 1: Map forecast list entries and default missing rain to zero.
+        // TODO 5: Map forecast list entries and default missing rain to zero.
         throw new NotImplementedException();
     }
 

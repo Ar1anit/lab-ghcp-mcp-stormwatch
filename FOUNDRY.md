@@ -1,106 +1,135 @@
-# Microsoft Foundry Model Setup
+# StormWatch Model and Embedding Setup
 
-StormWatch includes a complete local client in `StormWatch.FoundryClient`. The
-client uses a model deployment managed in Microsoft Foundry and gives that model
-the tools discovered from the participant's local StormWatch MCP server.
+The facilitator provides the Azure services used by the local
+`StormWatch.Chat` application. Participants build application code; they do not
+need an Azure subscription, portal access, resource role, or admin credential.
 
 ## What Runs Where
 
-- The model runs in Microsoft Foundry.
-- `StormWatch.FoundryClient` runs on the participant machine.
-- The StormWatch MCP server runs as a child process on the participant machine.
-- MCP traffic uses local stdio; Azure does not connect inbound to the laptop.
-- Model requests use outbound HTTPS and a temporary workshop API key.
+- `StormWatch.Chat` runs on the participant machine and maintains conversation
+  history.
+- The chat and embedding models run in a dedicated Microsoft Foundry resource.
+- Approved `.md` and `.txt` knowledge files live in the participant's local
+   `rag-data` folder.
+- The chatbot stores generated vectors in process memory and searches them
+   locally with cosine similarity.
+- The StormWatch MCP server runs locally as a child process over stdio.
+- OpenWeather, chat-model, and embedding-model requests use outbound HTTPS.
+- No Azure service connects inbound to the participant machine.
 
-This is separate from GitHub Copilot Chat. GitHub Copilot can test the same MCP
-server, but its model picker is not configured by this Foundry deployment.
+The Foundry model used by `StormWatch.Chat` is separate from the model selected
+inside GitHub Copilot Chat.
 
-## Participant Readiness
+## Facilitator Resource Contract
 
-The facilitator privately supplies a `.env` file for a dedicated workshop
-resource. Participants do not need Azure credentials, an Azure role, or access
-to the Foundry portal.
+Prepare these resources before the workshop:
 
-From `starter/`:
+1. A dedicated, disposable Foundry resource with a chat model deployment that
+   supports tool calling.
+2. An embedding model deployment in the same workshop resource.
+3. A `rag-data` folder containing approved educational storm-preparedness
+   `.md` and `.txt` files.
+4. A temporary OpenWeather key with access to Direct Geocoding and the 5 Day /
+   3 Hour Forecast APIs.
 
-```powershell
-dotnet build .\StormWatch.FoundryClient\StormWatch.FoundryClient.csproj
-```
+Use conservative model quota appropriate for startup corpus embedding and the
+expected concurrent participants. Keep the Foundry resource free of
+non-workshop deployments because its API key is resource-wide.
 
-Place the facilitator-supplied `.env` in the `starter/` directory. It contains:
+## Local Corpus Contract
+
+Place the same approved corpus in each participant's `starter/rag-data` folder.
+The application recursively reads only `.md` and `.txt` files. Keep the corpus
+within these tracked limits:
+
+| Limit | Value |
+| --- | ---: |
+| Supported files | 100 |
+| Bytes per file | 512,000 |
+| Total chunks | 500 |
+| Chunk length | 1,200 characters |
+| Chunk overlap | 200 characters |
+| Retrieved passages | 3 |
+
+The corpus should contain enough distinct material to test:
+
+- one question with a clearly relevant passage;
+- one question with multiple possible passages;
+- one unsupported question; and
+- recognizable filenames that participants can inspect in citations.
+
+Source files and vectors remain local. The application sends every chunk to the
+embedding deployment once at startup and sends each question once for query
+embedding. Retrieved chunks are later sent to the chat model for grounded
+generation. Use only public or approved educational content; never include
+patient, personal, product, operational, or other restricted data.
+
+## Participant Environment Files
+
+Place these three private files in each participant's `starter/` folder.
+
+### `.env`
 
 ```dotenv
 FOUNDRY_MODEL_ENDPOINT=https://<dedicated-workshop-resource>.openai.azure.com/
 FOUNDRY_MODEL_DEPLOYMENT=<deployment-name>
+FOUNDRY_EMBEDDING_DEPLOYMENT=<embedding-deployment-name>
 FOUNDRY_MODEL_API_KEY=<temporary-workshop-key>
 ```
 
-The repository ignores `.env`. Never commit it, paste its key into Copilot
-Chat, include it in screenshots, or print it during troubleshooting. Process
-environment variables override matching `.env` entries.
+### `.env.openweather`
 
-## End-To-End Local Test
-
-Run this after both StormWatch MCP tool methods are complete:
-
-```powershell
-dotnet run --project .\StormWatch.FoundryClient -- `
-  .\StormWatch\StormWatch.csproj `
-  .\tests\fixtures\forecast.json `
-  Bengaluru
+```dotenv
+OPENWEATHER_API_KEY=<temporary-workshop-key>
 ```
 
-The client must:
+The repository ignores both populated files. Their tracked `.example`
+counterparts contain placeholders only. Distribute the populated files and
+`rag-data` through
+an approved private channel; never paste their values into chat, commands,
+screenshots, logs, or source.
 
-1. start the local MCP server in fixture mode;
-2. discover exactly `get_forecast` and `assess_storm_risk`;
-3. provide those tools to the Foundry model;
-4. let the model select and invoke the appropriate local tool; and
-5. return an answer containing the fixture's peak, score, level, evidence, and
-   educational-use qualification.
+This separation is intentional:
 
-The deterministic fixture keeps OpenWeather credentials out of this validation
-path. Conversation content and selected tool results are sent to the Foundry
-model deployment, so do not substitute customer, patient, operational, or other
-restricted data.
+- model-only chat loads `.env` but does not call the embedding deployment;
+- RAG mode uses the embedding deployment from `.env` and local `rag-data`; and
+- the local MCP server receives only `.env.openweather` or a fixture path.
 
-## Common Failures
+Participant-written MCP code therefore never receives Foundry credentials.
 
-### Authentication failure
+## Readiness Checks
 
-Confirm that `.env` is in the directory from which the command is running and
-contains all three required names. Ask the facilitator for a replacement file
-if the key has expired or been rotated; do not send the key through chat or
-include it in diagnostic output.
+From `starter/`, verify package restore and project compilation:
 
-### Deployment not found
+```powershell
+dotnet build .\StormWatch.Chat\StormWatch.Chat.csproj
+dotnet build .\stormwatch\StormWatch.csproj
+```
 
-Use the deployment name, not only the underlying model family name. Confirm that
-the endpoint belongs to the resource containing that deployment.
+Then perform these facilitator-owned live checks without displaying a key or
+credential-bearing URL:
 
-### Model answers without a tool call
+1. Send one harmless prompt through the configured chat deployment.
+2. Embed one harmless sentence and confirm that the embedding deployment returns
+   a non-empty numeric vector.
+3. Confirm `rag-data` contains only approved `.md` and `.txt` files within the
+   documented bounds.
+4. Call OpenWeather Direct Geocoding and the forecast endpoint once.
+5. Run the complete reference chatbot against one known-good and one unsupported
+   corpus question; verify local file citations and bounded uncertainty.
+6. Run the reference chatbot with fixture-backed MCP tools and confirm a model
+   tool call produces the expected Bengaluru assessment.
 
-The expected fixture values must come from a StormWatch tool. Inspect the client
-output and Foundry telemetry available to the facilitator; do not treat an
-ungrounded answer as a passing result.
+Do not use participant, patient, product, operational, or other restricted data
+for readiness checks. Corpus chunks and user questions are sent to the embedding
+deployment; retrieved passages, questions, tool arguments, and tool results may
+be sent to the chat model.
 
-### MCP tools are missing
+## Rotation and Cleanup
 
-Build StormWatch first and verify that both SDK-attributed methods are complete.
-The Foundry client stops before calling the model unless it discovers exactly
-the two expected tools.
+After the workshop:
 
-### Quota or rate limiting
-
-The facilitator should size deployment capacity for concurrent participants and
-stagger the final validation if needed. Repeated retries can increase load and
-cost; use the direct SDK smoke test when model capacity is temporarily
-unavailable.
-
-## Facilitator Security Boundary
-
-An API key authorizes inference across the resource, not only one named model
-deployment. Use a disposable resource containing only workshop deployments,
-apply conservative quota and rate limits, distribute `.env` through an approved
-private channel, and regenerate both resource keys immediately after the
-workshop. Delete the resource when it is no longer needed.
+1. rotate the OpenWeather key;
+2. regenerate both Foundry resource keys;
+3. remove distributed environment files according to local policy; and
+4. delete disposable resources when they are no longer needed.

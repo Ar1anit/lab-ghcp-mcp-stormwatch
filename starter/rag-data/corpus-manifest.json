@@ -1,0 +1,130 @@
+{
+  "corpus_id": "stormwatch-rag-workshop-v1",
+  "title": "StormWatch Synthetic RAG Corpus",
+  "version": "1.0",
+  "generated_date": "2026-09-08",
+  "language": "en",
+  "synthetic": true,
+  "security_classification": "workshop-public",
+  "recommended_ingest_glob": "pdfs/*.pdf",
+  "documents": [
+    {
+      "document_id": "SW-001",
+      "title": "StormWatch System Overview and Architecture",
+      "filename": "stormwatch-system-overview.pdf",
+      "category": "system-overview",
+      "version": "1.0",
+      "topics": [
+        "purpose",
+        "actors",
+        "runtime architecture",
+        "trust boundaries",
+        "RAG and MCP routing",
+        "security"
+      ],
+      "do_not_use_for": [
+        "current weather",
+        "official alerts",
+        "operational safety decisions"
+      ]
+    },
+    {
+      "document_id": "SW-002",
+      "title": "StormWatch Risk Scoring and Interpretation",
+      "filename": "stormwatch-risk-scoring-reference.pdf",
+      "category": "risk-policy",
+      "version": "1.0",
+      "topics": [
+        "risk thresholds",
+        "score cap",
+        "risk levels",
+        "tie-breaking",
+        "worked examples",
+        "evidence"
+      ],
+      "do_not_use_for": [
+        "official warning classification",
+        "probability forecasting"
+      ]
+    },
+    {
+      "document_id": "SW-003",
+      "title": "StormWatch Weather Data and MCP Tool Contracts",
+      "filename": "stormwatch-weather-data-and-tool-contracts.pdf",
+      "category": "data-and-tools",
+      "version": "1.0",
+      "topics": [
+        "weather fields",
+        "units",
+        "geocoding",
+        "forecast source",
+        "get_forecast",
+        "assess_storm_risk",
+        "error behavior"
+      ],
+      "do_not_use_for": [
+        "credential storage",
+        "historical climate analysis"
+      ]
+    },
+    {
+      "document_id": "SW-004",
+      "title": "StormWatch Chatbot Operations Playbook",
+      "filename": "stormwatch-chatbot-operations-playbook.pdf",
+      "category": "chatbot-operations",
+      "version": "1.0",
+      "topics": [
+        "query routing",
+        "response composition",
+        "citations",
+        "failure handling",
+        "escalation",
+        "prompt injection"
+      ],
+      "do_not_use_for": [
+        "replacing emergency services",
+        "inventing missing tool output"
+      ]
+    },
+    {
+      "document_id": "SW-005",
+      "title": "StormWatch Synthetic City Scenarios",
+      "filename": "stormwatch-synthetic-city-scenarios.pdf",
+      "category": "training-scenarios",
+      "version": "1.0",
+      "topics": [
+        "Bengaluru scenario",
+        "Rotterdam scenario",
+        "Seattle boundary case",
+        "Miami thunderstorm case",
+        "Reykjavik thresholds",
+        "Mumbai combined indicators",
+        "Hamburg tie-break"
+      ],
+      "do_not_use_for": [
+        "current city conditions",
+        "historical weather claims",
+        "official alerts"
+      ]
+    },
+    {
+      "document_id": "SW-006",
+      "title": "StormWatch FAQ, Glossary, and Responsible Use",
+      "filename": "stormwatch-faq-glossary-responsible-use.pdf",
+      "category": "faq-and-governance",
+      "version": "1.0",
+      "topics": [
+        "frequently asked questions",
+        "glossary",
+        "limitations",
+        "responsible use",
+        "RAG terminology",
+        "MCP terminology"
+      ],
+      "do_not_use_for": [
+        "emergency decisions",
+        "medical or travel advice"
+      ]
+    }
+  ]
+}

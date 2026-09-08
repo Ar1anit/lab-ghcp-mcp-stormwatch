@@ -1,204 +1,223 @@
 # StormWatch Facilitator Guide
 
-Use this guide to deliver the 60-minute C# and MCP core followed by the optional
-20-minute advanced frontend task. The complete seven-task route takes 80
-minutes and teaches disciplined agent-assisted development, MCP integration,
-and reuse across presentation layers—not weather science.
+Deliver a 90-minute required lab followed by an optional 20-minute web-chat
+task. Participants progressively build one assistant: multi-turn chat, local
+vector retrieval, grounded answers, weather/risk services, then MCP tools.
 
 ## Room Setup
 
 Complete this at least one day before delivery:
 
-- Verify the .NET 10 SDK and C# Dev Kit on the standard developer image.
-- Create a dedicated, disposable Microsoft Foundry resource containing only a
-  model deployment that supports tool calling.
-- Configure conservative quota and rate limits for the expected workshop load.
-- Create a `.env` containing `FOUNDRY_MODEL_ENDPOINT`,
-  `FOUNDRY_MODEL_DEPLOYMENT`, and `FOUNDRY_MODEL_API_KEY`. Distribute it only
-  through an approved private workshop channel.
-- Validate capacity for the expected concurrent participant count and define a
-  staggered test window if necessary.
-- Confirm the ignored `.env` loads from `starter/` and the endpoint is reachable
-  from the standard developer image and managed network.
-- Confirm the ASP.NET Core Web App (`webapp`) template is available.
-- Verify GitHub Copilot Agent mode and local MCP servers are allowed by policy.
-- Have participants activate OpenWeather keys in advance.
-- Test Direct Geocoding and 5 Day / 3 Hour Forecast on the venue network.
-- Open `starter/` as its own workspace and review `.vscode/mcp.json`.
-- Run the reference acceptance suite and protocol smoke:
+- Verify the .NET 10 SDK, C# Dev Kit, GitHub Copilot Chat, and Agent mode on the
+  participant image.
+- Prepare a dedicated Foundry resource with a tool-capable chat deployment, an
+  embedding deployment, and conservative quota for the expected concurrency.
+- Prepare the same approved educational `.md` and `.txt` corpus in `rag-data`
+  for every participant.
+- Keep the corpus within 100 files, 512,000 bytes per file, and 500 chunks with
+  the supplied defaults.
+- Record one known-good corpus question and one unsupported question for the
+  live RAG gate.
+- Activate and test a temporary OpenWeather key for Direct Geocoding and the 5
+  Day / 3 Hour Forecast APIs.
+- Confirm local MCP servers are allowed by organizational policy.
+- Confirm outbound HTTPS access to Foundry and
+  `api.openweathermap.org`.
+- Prepare the two ignored participant files described in [FOUNDRY.md](../FOUNDRY.md):
+  `.env` and `.env.openweather`, plus `rag-data`.
+- Rehearse model-only mode, live RAG, fixture-backed chatbot tools, Copilot MCP
+  discovery, and the fallback paths.
+- Keep `solution/` closed unless recovery is required.
+
+Do not introduce patient, product, operational, or other restricted data.
+Corpus chunks and questions are sent to the embedding deployment; questions,
+retrieved passages, tool arguments, and tool results may be sent to the chat
+model.
+
+## Reference Validation
+
+From the repository root:
 
 ```powershell
+dotnet test .\solution\StormWatch.Chat.Tests\StormWatch.Chat.Tests.csproj
 dotnet test .\solution\StormWatch.Tests\StormWatch.Tests.csproj
 dotnet run --project .\solution\StormWatch.Smoke -- `
-  .\solution\StormWatch\StormWatch.csproj `
+  .\solution\stormwatch\StormWatch.csproj `
   .\starter\tests\fixtures\forecast.json
 ```
 
-- Place the workshop `.env` in `starter/`, then run `StormWatch.FoundryClient`
-  against the reference server using the fixture.
-  Confirm telemetry shows a StormWatch tool call rather than an ungrounded model
-  answer.
+Expected automated evidence:
 
-- Rehearse the offline fallback in `TROUBLESHOOTING.md`.
-- Keep `solution/` closed unless recovery is needed.
+- 5 chatbot/RAG tests pass;
+- 17 weather/application tests pass; and
+- the protocol smoke discovers and invokes exactly `get_forecast` and
+  `assess_storm_risk`.
 
-Do not introduce patient, product, operational, or restricted data.
+With the two private files and `rag-data` in `starter/`, run the complete
+reference chatbot from that working directory so it can load them without
+copying secrets:
 
-## Core Definition Of Done
+```powershell
+Push-Location .\starter
+dotnet run --project ..\solution\StormWatch.Chat -- --no-rag
+dotnet run --project ..\solution\StormWatch.Chat
+dotnet run --project ..\solution\StormWatch.Chat -- --with-tools `
+  --server-project ..\solution\stormwatch\StormWatch.csproj `
+  --fixture .\tests\fixtures\forecast.json
+Pop-Location
+```
 
-- All 17 tests pass.
-- The fixture CLI reports `WARNING (100/100)` at `2026-08-30 06:00 UTC`.
-- No API key appears in tracked source, commands, chat, logs, screenshots, or
-  output; the model key exists only in the ignored `.env`.
-- The official C# SDK server advertises both tools over stdio.
-- One MCP call completes in Copilot Agent mode.
-- The facilitator-provided Foundry model invokes a participant-local MCP tool
-  through `StormWatch.FoundryClient`.
-- Output is labeled as an educational heuristic.
+The second command must answer the known-good question with sources and bound
+the unsupported question. The third must invoke a local MCP tool and report the
+fixture's `WARNING (100/100)` result.
 
-## Advanced Frontend Definition Of Done
+## Core Definition of Done
 
-- The Razor Pages project builds and the original 17 tests remain unchanged.
-- Fixture mode renders five periods and the expected Bengaluru assessment.
-- The web page reuses `StormWatchDataService` and `StormRiskService`.
-- Blank input, accessibility, and narrow-width checks pass.
-- Browser traffic stays on localhost and contains no credential or stack trace.
+- All 22 tests pass.
+- A two-turn model-only conversation retains history.
+- Local retrieval returns at most three mapped passages through a fake
+  embedding boundary.
+- A supported knowledge answer cites only sources supplied for that turn.
+- An unsupported answer does not invent or reuse stale sources.
+- The weather fixture reports `WARNING (100/100)` at
+  `2026-08-30 06:00 UTC`.
+- The local server advertises exactly two structured tools.
+- The chatbot and GitHub Copilot both invoke the same MCP server.
+- Model and weather credentials remain in separate ignored files and reach only
+  the processes that require them.
+- Every storm-risk result remains labeled as an educational heuristic.
+
+## Optional Web Definition of Done
+
+- A server-rendered Razor Pages chat UI reuses the existing assistant services.
+- Conversation state is scoped per browser session, never global.
+- Citations stay attached to the assistant turn that used them.
+- Blank and oversized input have accessible validation.
+- Desktop and mobile-width layouts have no overlap or horizontal scroll.
+- Browser traffic contains no direct Foundry or OpenWeather call and no
+  credential.
+- All 22 original tests remain green.
 
 ## Delivery Clock
 
-| Time | Facilitator action | Participant checkpoint |
+| Time | Facilitator focus | Participant checkpoint |
 | --- | --- | --- |
-| 0:00-0:07 | Frame scenario, run red baseline, identify boundaries. | Intentional TODO failures only. |
-| 0:07-0:20 | Coach `HttpClient` adapter and JSON review. | Six weather tests pass. |
-| 0:20-0:35 | Treat thresholds as requirements and implement risk. | Eight risk tests pass. |
-| 0:35-0:44 | Complete CLI and inspect claims. | All 17 tests and fixture CLI pass. |
-| 0:44-0:54 | Explain SDK registration, attributes, and stdio. | Two tools appear in Copilot. |
-| 0:54-1:00 | Compare one Copilot invocation with one Foundry-backed local-client invocation. | Proves both clients use the same local tools and names a limitation. |
-| 1:00-1:20 | Run advanced Task 7: scaffold Razor Pages and coach service reuse, browser trust boundaries, and responsive review. | Deterministic frontend result passes its completion gate. |
+| 0:00-0:08 | Frame one assistant with separate model, retrieval, grounding, and tool boundaries. | 22 tests discovered; failures map to numbered TODOs. |
+| 0:08-0:22 | Coach chat history and console-loop behavior. | Two model-only chat tests and live two-turn chat pass. |
+| 0:22-0:37 | Explain chunking, embeddings, cosine similarity, and the fake embedding boundary. | Two local-RAG tests pass; raw retrieval remains separate from generation. |
+| 0:37-0:49 | Review prompt-injection boundary, no-evidence behavior, and source lists. | All five chatbot tests and one cited live answer pass. |
+| 0:49-1:11 | Coach HTTP parsing and deterministic risk thresholds. | All 17 domain/application tests and fixture CLI pass. |
+| 1:11-1:25 | Explain MCP registration, stdio, discovery, and tool approval. | Chatbot and Copilot both invoke the two local tools. |
+| 1:25-1:30 | Run final tests and evidence review. | 22 tests, three-turn transcript, and limitation statement pass. |
+| 1:30-1:50 | Optional Razor Pages chat adapter. | Responsive, accessible, credential-free browser path passes. |
 
-Protect the final 16 minutes. Invoking a self-built official-SDK tool is the
-core GHCP x MCP outcome. Reserve the additional 20 minutes when advanced Task 7
-is part of the delivery.
+Protect the final 19 minutes. The distinctive outcome is not merely creating an
+MCP server; it is showing one assistant use retrieved knowledge and local tools
+for different kinds of claims.
 
 ## Teaching Notes
 
-### Vocabulary
+### Conversation
 
-| Term | In this lab |
-| --- | --- |
-| MCP host/client | VS Code and GitHub Copilot Agent mode |
-| MCP server | `dotnet run --project StormWatch -- --mcp` |
-| MCP C# SDK | `ModelContextProtocol` NuGet package |
-| MCP tools | `get_forecast`, `assess_storm_risk` |
-| Application core | records, adapter, risk service, CLI |
+Task 2 runs with `--no-rag`. Prior natural user and assistant turns belong in
+history. Augmented prompts do not: storing them would mix transient retrieved
+passages into future user intent.
 
-### Weather Adapter
+### Retrieval and Grounding
 
-Participants may use forecast-by-city. Point to the test requiring Direct
-Geocoding first and coordinates second. Keep `HttpClient` injected so request
-construction is testable without a network.
+Retrieval is not generation. Task 3 returns typed passages and is tested through
+`ITextEmbeddingService`. Task 4 treats those passages as untrusted data, assigns
+stable `[S#]` identifiers, and appends deterministic sources.
 
-### Risk Rules
+Do not imply that citations prove truth. They prove which supplied text was
+available to the model. The unsupported-question gate is as important as the
+known-good answer.
 
-The peak fixture is $60 + 25 + 20 + 15 = 120$, capped at 100. Tiered indicators
-are exclusive: 15 m/s earns 25 wind points, not 40.
+### Weather and Risk Hints
 
-### MCP SDK
+Weather requests geocode first and forecast by coordinates. Tests use injected
+`HttpClient`; acceptance uses the synthetic fixture. The peak fixture scores
+$60 + 25 + 20 + 15 = 120$, capped at 100. Tiered indicators are exclusive.
 
-Show the registration chain in `Program.cs` and attributes in
-`StormWatchTools.cs`. Tool discovery comes from SDK assembly scanning; the
-methods return records so the SDK emits structured results.
+### MCP Hints
 
-Stdio reserves stdout for protocol messages. The starter clears logging
-providers before running MCP mode. Local servers execute with the user's
-permissions, so pause on the proposed tool name and city before approval.
+`StormWatchTools` must remain thin. The chatbot starts the same local stdio
+server that VS Code uses, discovers exactly two tools, and gives them to
+`Microsoft.Extensions.AI` function invocation. Local retrieval is not exposed
+as an MCP tool in this lab; it is an explicit RAG application boundary.
 
-### Microsoft Foundry Model
+### Credential Isolation
 
-The model is remote, but the agent loop and MCP client are local. The local C#
-client sends the model the available tool schemas, receives a tool-call request,
-executes that request against the participant's stdio server, and returns the
-tool result to the model. No public MCP endpoint or inbound laptop connection is
-needed.
+- `.env` reaches the chatbot model client.
+- The embedding deployment in `.env` is used only when RAG is enabled.
+- `.env.openweather` reaches the MCP server only in live weather mode.
 
-This deployment does not replace GitHub Copilot's selected model. It provides a
-second runtime client that proves MCP interoperability independently of Copilot.
-Participants need no Azure credentials or Foundry role. The shared workshop key
-is resource-wide rather than deployment-specific, so isolate it in a dedicated
-resource containing no non-workshop deployments. Tool arguments and results are
-model inputs, so keep the exercise on the synthetic fixture.
+Never combine these files for convenience. Participant-written MCP code should
+not inherit the Foundry key or embedding deployment configuration.
 
-If Foundry access, quota, or the venue network fails, retain the direct SDK
-protocol smoke as the MCP acceptance path. Do not expose the stdio process
-publicly or move the key outside the approved `.env` distribution path.
+### Optional Web Chat
 
-Immediately after the workshop, regenerate both keys on the dedicated resource,
-remove the distributed `.env` files according to local policy, and delete the
-resource when it is no longer needed.
-
-### Frontend
-
-Keep the browser thin and server-rendered. The Razor Page should inject
-`StormWatchDataService`, pass `HttpContext.RequestAborted`, call
-`StormRiskService.Assess`, and render typed values. It must not parse the CLI
-string or call OpenWeather from JavaScript.
-
-Run the web host separately from the MCP process. ASP.NET logging is normal in
-the web process but must never be introduced into the MCP stdio stream. Use the
-fixture for the acceptance path and inspect browser developer tools to prove
-that no key or direct OpenWeather request crosses the browser boundary.
+The browser is a presentation adapter. Calls to models and MCP remain
+server-side. Use scoped conversation state and avoid a singleton transcript
+shared across participants.
 
 ## Progressive Hints
 
-### Weather
+### Chatbot
 
-1. Parse the first geocoding array element into `Location`.
-2. Build encoded query pairs with `Uri.EscapeDataString`.
-3. Use a linked `CancellationTokenSource` and `CancelAfter`.
-4. Catch HTTP, timeout, and JSON errors without including request URLs.
+1. Build each request from the system message plus prior successful turns.
+2. Store the natural question, not the grounded prompt.
+3. Treat `/exit` and EOF as normal completion.
 
-### Risk
+### Local Vector Retrieval
 
-1. Score one point first, then order by score descending and time ascending.
-2. Use `if`/`else if` for each tier.
-3. Cap only after collecting every reason.
+1. Embed loaded chunks once when constructing the index.
+2. Normalize both document and query vectors before taking their dot product.
+3. Sort by similarity descending, then passage ID for deterministic ties.
 
-### CLI
+### Grounding
 
-1. Fixture mode returns before reading the environment.
-2. Catch expected exceptions, write to stderr, return 2.
-3. Render with `Take(5)` and invariant numeric formatting.
+1. Number passages before generating.
+2. State that retrieved content is data, not instructions.
+3. Append sources deterministically after model completion.
+
+### Weather and Risk
+
+1. Parse geocoding before forecast payloads.
+2. Use `if`/`else if` for tiered thresholds.
+3. Score first, then order by score descending and time ascending.
 
 ### MCP
 
-1. Await `dataService.LoadAsync` in each tool.
-2. Map domain values into the supplied structured result records.
-3. Call `StormRiskService.Assess`; do not repeat thresholds.
-
-### Frontend
-
-1. Reference `stormwatch/StormWatch.csproj` from the Razor Pages project.
-2. Register and inject `StormWatchDataService`.
-3. Keep forecast and assessment as typed page-model properties.
-4. Use the fixture and localhost before troubleshooting live weather.
-5. Check mobile reflow and browser network traffic before polishing visuals.
+1. Compose `StormWatchDataService` and `StormRiskService`.
+2. In fixture mode, pass only `STORMWATCH_FIXTURE_PATH` to the child process.
+3. Reject unexpected discovered tool sets.
 
 ## Recovery
 
-Give one hint at a time. If less than 16 minutes remain, restore the C# source:
+Give one hint at a time. If a task must be restored from `starter/`:
 
 ```powershell
-Copy-Item -Force ..\solution\StormWatch\*.cs .\StormWatch\
-dotnet test .\StormWatch.Tests\StormWatch.Tests.csproj
+# Chat/RAG recovery
+Copy-Item -Force ..\solution\StormWatch.Chat\*.cs .\StormWatch.Chat\
+
+# Weather/risk recovery
+Copy-Item -Force ..\solution\stormwatch\Weather.cs .\stormwatch\
+Copy-Item -Force ..\solution\stormwatch\Risk.cs .\stormwatch\
+
+# MCP recovery
+Copy-Item -Force ..\solution\stormwatch\StormWatchTools.cs .\stormwatch\
+Copy-Item -Force ..\solution\StormWatch.Chat\McpToolSession.cs .\StormWatch.Chat\
 ```
 
-If live API access fails, use fixture MCP mode from `TROUBLESHOOTING.md`.
+Re-run the relevant focused tests after any recovery. If a live service fails,
+use the mode-specific fallback in [TROUBLESHOOTING.md](../TROUBLESHOOTING.md)
+without claiming missing evidence.
 
 ## Debrief
 
-- Which context made Copilot's code easier to verify?
-- What belongs in the application core rather than an MCP wrapper?
-- What does the SDK automate, and what security decisions remain yours?
-- What did the tests prove, and what did they not prove?
-- Which responsibilities must remain server-side when the application gains a
-  browser frontend?
+- What is the difference between conversation memory and retrieved context?
+- What does a source list prove, and what does it not prove?
+- Which claims should come from local files and which should come from MCP tools?
+- Why should the MCP child process not inherit model or embedding configuration?
+- Which tests are deterministic, and which live checks remain probabilistic?
