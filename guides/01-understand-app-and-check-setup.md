@@ -4,6 +4,9 @@
 **Clock:** 0:00-0:08  
 **Code changes:** None
 
+**Prerequisite:** Complete
+[Guide 00: Understand RAG and MCP](00-understand-rag-and-mcp.md).
+
 ## Outcome
 
 Establish a trustworthy starting point. You should understand how conversation,

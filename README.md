@@ -12,6 +12,8 @@ An optional task adds a browser chat interface.
 - **Audience:** Developers with basic C# and Git familiarity
 - **Starting point:** Open `starter/` as the VS Code workspace root
 - **Instructions:** Follow the [participant guide index](guides/README.md)
+- **Concept primer:** Read [Guide 00: Understand RAG and MCP](guides/00-understand-rag-and-mcp.md)
+  before starting the implementation clock
 - **Result:** A tested multi-turn RAG chatbot with cited sources, two local MCP
   weather tools, and an optional Razor Pages chat UI
 
@@ -23,6 +25,7 @@ An optional task adds a browser chat interface.
 
 | Time | Task | Outcome |
 | --- | --- | --- |
+| Before 0:00 | 00. Understand RAG and MCP | Distinguish retrieved evidence from callable tools and identify their trust boundaries. |
 | 0:00-0:08 | 1. Understand the assistant | Verify the architecture, trust boundaries, and red baseline. |
 | 0:08-0:22 | 2. Build conversational chat | Maintain a multi-turn conversation with the Foundry model. |
 | 0:22-0:37 | 3. Build a local vector index | Chunk local files, embed them, and retrieve by cosine similarity. |

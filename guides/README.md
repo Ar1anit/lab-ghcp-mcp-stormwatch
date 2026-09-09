@@ -7,6 +7,11 @@ capabilities through MCP, and optionally give it a browser interface.
 The required route is 90 minutes. Work from `starter/` and move on when each
 completion gate is satisfied.
 
+Before starting the implementation clock, spend 10 minutes on
+[Guide 00: Understand RAG and MCP](00-understand-rag-and-mcp.md). It explains
+which responsibilities belong to retrieval, the model, the MCP host, and the
+MCP server, and includes official Microsoft learning resources.
+
 ## Before the Workshop: Add the Environment Files
 
 The facilitator provides two private files and a `rag-data` folder. Place them
