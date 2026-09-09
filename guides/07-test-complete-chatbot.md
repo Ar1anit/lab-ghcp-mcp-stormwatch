@@ -72,5 +72,14 @@ Name at least one remaining limitation:
 **Evidence to retain:** two green test summaries, a redacted three-turn
 transcript, discovered tools, and your limitation statement.
 
+## Sources
+
+- [dotnet test](https://learn.microsoft.com/dotnet/core/tools/dotnet-test) -
+  test execution, runner selection, filtering, and result reporting.
+- [Unit testing best practices for .NET](https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices) -
+  deterministic, isolated, readable unit tests.
+- [Configuration providers in .NET](https://learn.microsoft.com/dotnet/core/extensions/configuration-providers#environment-variable-configuration-provider) -
+  keeping runtime configuration outside tracked source files.
+
 Continue to [Optional Task 8: Add a web chat interface](08-add-web-chat-interface.md),
 or stop with the verified console assistant.

@@ -77,3 +77,12 @@ OpenWeather and that no key crosses the browser boundary.
 
 **Evidence to retain:** green builds/tests, desktop and mobile screenshots, and
 a browser network inspection showing the credential boundary.
+
+## Sources
+
+- [Razor Pages architecture and concepts in ASP.NET Core](https://learn.microsoft.com/aspnet/core/razor-pages/?view=aspnetcore-10.0) -
+  page models, handlers, forms, and Razor Pages validation.
+- [Session and state management in ASP.NET Core](https://learn.microsoft.com/aspnet/core/fundamentals/app-state?view=aspnetcore-10.0#session-state) -
+  per-user session state and its operational considerations.
+- [Model validation in ASP.NET Core MVC and Razor Pages](https://learn.microsoft.com/aspnet/core/mvc/models/validation?view=aspnetcore-10.0) -
+  server-side validation, validation attributes, and error display.

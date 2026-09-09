@@ -80,4 +80,11 @@ weather tool in this mode.
 **Evidence to retain:** focused test summary and a credential-free two-turn
 transcript.
 
+## Sources
+
+- [Microsoft.Extensions.AI libraries](https://learn.microsoft.com/dotnet/ai/microsoft-extensions-ai) -
+  the provider-neutral `IChatClient` abstraction and composable AI services.
+- [Use the IChatClient interface](https://learn.microsoft.com/dotnet/ai/ichatclient) -
+  chat messages, response generation, streaming, and client middleware.
+
 Continue to [Task 3: Build a local vector index](03-build-local-vector-index.md).

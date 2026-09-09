@@ -92,4 +92,14 @@ unsupported question should not receive a fabricated preparedness claim.
 **Evidence to retain:** five-test pass summary and a redacted transcript showing
 one cited answer and one bounded no-evidence answer.
 
+## Sources
+
+- [Retrieval augmented generation (RAG) and indexes](https://learn.microsoft.com/azure/foundry/concepts/retrieval-augmented-generation) -
+  grounding data, citations, security considerations, and RAG limitations.
+- [RAG prompt engineering](https://learn.microsoft.com/azure/architecture/ai-ml/guide/rag/rag-prompt-engineering) -
+  structuring retrieved context and requiring evidence-based responses.
+- [Prompt Shields](https://learn.microsoft.com/azure/ai-services/content-safety/concepts/jailbreak-detection#prompt-shields-for-documents) -
+  the indirect prompt-injection threat posed by instructions embedded in
+  retrieved documents.
+
 Continue to [Task 5: Add weather and risk services](05-add-weather-and-risk-services.md).

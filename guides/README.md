@@ -84,3 +84,16 @@ If the embedding deployment, OpenWeather, or the venue network is unavailable,
 use the facilitator-approved recovery path in
 [`TROUBLESHOOTING.md`](../TROUBLESHOOTING.md). Do not substitute invented model
 answers for missing retrieval or tool evidence.
+
+## Sources
+
+- [Microsoft.Extensions.AI libraries](https://learn.microsoft.com/dotnet/ai/microsoft-extensions-ai) -
+  chat and embedding abstractions used by the assistant.
+- [Retrieval augmented generation (RAG) and indexes](https://learn.microsoft.com/azure/foundry/concepts/retrieval-augmented-generation) -
+  the retrieve, augment, and generate pattern used in Tasks 3 and 4.
+- [Get started with .NET AI and the Model Context Protocol](https://learn.microsoft.com/dotnet/ai/get-started-mcp) -
+  MCP hosts, clients, servers, and the official C# SDK.
+- [Configuration providers in .NET](https://learn.microsoft.com/dotnet/core/extensions/configuration-providers#environment-variable-configuration-provider) -
+  environment-based application configuration.
+- [Razor Pages architecture and concepts in ASP.NET Core](https://learn.microsoft.com/aspnet/core/razor-pages/?view=aspnetcore-10.0) -
+  the server-rendered web framework used by the optional task.

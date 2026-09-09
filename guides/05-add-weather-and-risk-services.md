@@ -90,4 +90,11 @@ evidence because it changes over time.
 
 **Evidence to retain:** the 17-test pass summary and fixture report.
 
+## Sources
+
+- [Make HTTP requests with the HttpClient class](https://learn.microsoft.com/dotnet/fundamentals/networking/http/httpclient) -
+  request construction, response handling, timeouts, and cancellation.
+- [How to read JSON as .NET objects](https://learn.microsoft.com/dotnet/standard/serialization/system-text-json/deserialization) -
+  typed and asynchronous JSON deserialization with `System.Text.Json`.
+
 Continue to [Task 6: Connect OpenWeather MCP tools](06-connect-openweather-mcp-tools.md).

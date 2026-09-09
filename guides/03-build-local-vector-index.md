@@ -117,4 +117,17 @@ source-list behavior if it is still intentionally red.
 
 **Evidence to retain:** focused test output and a reviewed `Knowledge.cs` diff.
 
+## Sources
+
+- [Use the IEmbeddingGenerator interface](https://learn.microsoft.com/dotnet/ai/iembeddinggenerator) -
+  asynchronous batch embedding generation and cancellation in
+  `Microsoft.Extensions.AI`.
+- [Generate embeddings with Azure OpenAI](https://learn.microsoft.com/azure/foundry/openai/how-to/embeddings) -
+  embedding inputs, vectors, limits, and deployment configuration.
+- [Relevance in vector search](https://learn.microsoft.com/azure/search/vector-search-ranking) -
+  nearest-neighbor ranking and cosine similarity. This lab implements the
+  small-corpus scan locally rather than using Azure AI Search.
+- [Retrieval augmented generation (RAG) and indexes](https://learn.microsoft.com/azure/foundry/concepts/retrieval-augmented-generation) -
+  the wider retrieval workflow and its limitations.
+
 Continue to [Task 4: Ground answers with citations](04-ground-answers-with-citations.md).

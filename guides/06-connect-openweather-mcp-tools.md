@@ -87,4 +87,14 @@ and deliberately invoke one tool. Review the city argument before approval.
 **Evidence to retain:** discovered tool names, one chatbot tool-backed answer,
 and one inspected Copilot invocation.
 
+## Sources
+
+- [Get started with .NET AI and the Model Context Protocol](https://learn.microsoft.com/dotnet/ai/get-started-mcp) -
+  MCP architecture, protocol messages, and the official C# SDK.
+- [Create a minimal MCP server using C#](https://learn.microsoft.com/dotnet/ai/quickstarts/build-mcp-server) -
+  stdio server registration, tool exposure, and GitHub Copilot integration.
+- [Create a minimal MCP client using .NET](https://learn.microsoft.com/dotnet/ai/quickstarts/build-mcp-client) -
+  starting a stdio server, discovering tools, and supplying them to an
+  `IChatClient`.
+
 Continue to [Task 7: Test the complete chatbot](07-test-complete-chatbot.md).

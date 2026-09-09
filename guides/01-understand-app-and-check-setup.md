@@ -108,4 +108,15 @@ unit tests are setup defects, not expected failures.
 **Evidence to retain:** restore output, both red summaries, and your architecture
 map.
 
+## Sources
+
+- [.NET CLI overview](https://learn.microsoft.com/dotnet/core/tools/) -
+  available SDK commands and how the CLI selects an installed SDK.
+- [dotnet restore](https://learn.microsoft.com/dotnet/core/tools/dotnet-restore) -
+  restoring project dependencies and tools.
+- [dotnet test](https://learn.microsoft.com/dotnet/core/tools/dotnet-test) -
+  test discovery and execution with VSTest or Microsoft.Testing.Platform.
+- [Configuration providers in .NET](https://learn.microsoft.com/dotnet/core/extensions/configuration-providers#environment-variable-configuration-provider) -
+  loading configuration from environment variables.
+
 Continue to [Task 2: Build a conversational chatbot](02-build-conversational-chatbot.md).
